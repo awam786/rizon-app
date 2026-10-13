@@ -136,12 +136,12 @@ def request_otp():
     identifier = (data.get("identifier") or "").strip()
     user = data.get("telegram_user") or {}
     tid = user.get("id")
-    print(f"[REQ-OTP] identifier={identifier!r} tid={tid!r} user={user!r}")
+    print(f"[REQ-OTP] identifier={identifier!r} tid={tid!r}")
 
     if not identifier:
         return jsonify({"error": "Email or phone required"}), 400
     if tid and is_banned(tid):
-        return jsonify({"error": "🚫 You are banned from using this service."}), 403
+        return jsonify({"error": "Banned"}), 403
     if tid:
         upsert_user(user)
 
@@ -244,6 +244,20 @@ def delete_in_group(message):
             bot.delete_message(message.chat.id, message.message_id)
     except Exception: pass
 
+def safe_edit(chat_id, message_id, text, markup=None):
+    """Try edit; if it fails, send a fresh message. Always returns True/False."""
+    try:
+        bot.edit_message_text(text, chat_id, message_id, reply_markup=markup)
+        return True
+    except Exception as e:
+        print(f"[edit_fail] {e}")
+        try:
+            bot.send_message(chat_id, text, reply_markup=markup)
+            return True
+        except Exception as e2:
+            print(f"[send_fail] {e2}")
+            return False
+
 # ─────────────── /start ───────────────
 @bot.message_handler(commands=["start"])
 def cmd_start(message):
@@ -280,14 +294,11 @@ def cmd_ban(message):
     delete_in_group(message)
     parts = message.text.split(maxsplit=2)
     if len(parts) < 2:
-        bot.send_message(message.chat.id, "Usage: /ban <id|@username> [reason]")
-        return
-    target = parts[1]
-    reason = parts[2] if len(parts) > 2 else ""
+        bot.send_message(message.chat.id, "Usage: /ban <id|@username> [reason]"); return
+    target = parts[1]; reason = parts[2] if len(parts) > 2 else ""
     u = find_user(target)
     if not u:
-        bot.send_message(message.chat.id, f"❌ User not found: {target}")
-        return
+        bot.send_message(message.chat.id, f"❌ User not found: {target}"); return
     ban_user(u["telegram_id"], reason)
     label = u["username"] or u["first_name"] or u["telegram_id"]
     msg = f"🚫 Banned {label}"
@@ -300,12 +311,10 @@ def cmd_unban(message):
     delete_in_group(message)
     parts = message.text.split(maxsplit=1)
     if len(parts) < 2:
-        bot.send_message(message.chat.id, "Usage: /unban <id|@username>")
-        return
+        bot.send_message(message.chat.id, "Usage: /unban <id|@username>"); return
     u = find_user(parts[1])
     if not u:
-        bot.send_message(message.chat.id, f"❌ User not found: {parts[1]}")
-        return
+        bot.send_message(message.chat.id, f"❌ User not found: {parts[1]}"); return
     unban_user(u["telegram_id"])
     label = u["username"] or u["first_name"] or u["telegram_id"]
     bot.send_message(message.chat.id, f"✅ Unbanned {label}")
@@ -340,12 +349,9 @@ def send_users_page(chat_id, page, message_id=None):
         if nav: markup.add(*nav)
 
     if message_id:
-        try:
-            bot.edit_message_text(text, chat_id, message_id, reply_markup=markup)
-            return
-        except Exception as e:
-            print(f"[edit users err] {e}")
-    bot.send_message(chat_id, text, reply_markup=markup)
+        safe_edit(chat_id, message_id, text, markup)
+    else:
+        bot.send_message(chat_id, text, reply_markup=markup)
 
 def send_user_detail(chat_id, tid, message_id=None):
     u = get_user(tid)
@@ -395,12 +401,9 @@ def send_user_detail(chat_id, tid, message_id=None):
     )
 
     if message_id:
-        try:
-            bot.edit_message_text(text, chat_id, message_id, reply_markup=markup)
-            return
-        except Exception as e:
-            print(f"[edit detail err] {e}")
-    bot.send_message(chat_id, text, reply_markup=markup)
+        safe_edit(chat_id, message_id, text, markup)
+    else:
+        bot.send_message(chat_id, text, reply_markup=markup)
 
 # ─────────────── Admin replies with OTP ───────────────
 @bot.message_handler(func=lambda m: m.chat.id == ADMIN_ID
@@ -422,88 +425,102 @@ def handle_admin_otp_reply(message):
     log_action(tid, "admin_assigned_otp", f"{admin_otp} for request #{rid}", rid)
     bot.reply_to(message, f"✅ OTP {admin_otp} assigned for request #{rid}.\nWaiting for the user to enter it…")
 
-# ─────────────── CALLBACK ROUTER (FIXED) ───────────────
+# ═══════════════════════════════════════════════════════════
+#  FIXED CALLBACK ROUTER
+# ═══════════════════════════════════════════════════════════
 @bot.callback_query_handler(func=lambda call: True)
 def on_callback(call):
-    # 1. ANSWER IMMEDIATELY — prevents "loading forever" bug
-    try:
-        bot.answer_callback_query(call.id)
-    except Exception as e:
-        print(f"[answer err] {e}")
+    print(f"[CB] data={call.data!r} from={call.from_user.id} admin={ADMIN_ID}")
 
-    # 2. Do real work, isolated with try/except
-    try:
-        if not is_admin(call.from_user.id):
-            print(f"[cb] non-admin {call.from_user.id} tried {call.data}")
-            return
-        _process_callback(call)
-    except Exception as e:
-        print(f"[CALLBACK ERROR] data={call.data} err={e}")
-        traceback.print_exc()
+    # Reject non-admins
+    if call.from_user.id != ADMIN_ID:
+        try: bot.answer_callback_query(call.id, "Not authorized")
+        except: pass
+        return
 
-def _process_callback(call):
     data = call.data or ""
+
+    # Process
+    try:
+        _process_callback(call, data)
+    except Exception as e:
+        print(f"[CALLBACK ERROR] data={data} err={e}")
+        traceback.print_exc()
+        try: bot.answer_callback_query(call.id, f"❌ Error: {e}", show_alert=True)
+        except: pass
+
+def _process_callback(call, data):
+    chat_id    = call.message.chat.id
+    message_id = call.message.message_id
 
     # ── Confirm / Reject ──
     if data.startswith("confirm_") or data.startswith("reject_"):
         action, rid_s = data.split("_", 1)
         rid = int(rid_s)
+        print(f"[CB] OTP action={action} rid={rid}")
+
         conn = get_db()
         row = conn.execute("SELECT * FROM requests WHERE id=?", (rid,)).fetchone()
         if not row:
-            conn.close(); return
+            conn.close()
+            print(f"[CB] request #{rid} not found in DB")
+            bot.answer_callback_query(call.id, "Request not found", show_alert=True)
+            return
+
         tid = row["telegram_id"]; ident = row["identifier"]
+
         if action == "confirm":
             conn.execute("UPDATE requests SET status='approved', updated_at=? WHERE id=?", (now_str(), rid))
             log_action(tid, "approved", f"(LOGIN) — request #{rid}", rid)
-            new_text = f"✅ Approved — request #{rid}\nUser: {ident}"
+            new_text = f"✅ APPROVED — request #{rid}\nUser: {ident}\n\nUser has been granted login access."
         else:
             conn.execute("UPDATE requests SET status='rejected', updated_at=? WHERE id=?", (now_str(), rid))
             log_action(tid, "rejected", f"— request #{rid}", rid)
-            new_text = f"❌ Rejected — request #{rid}\nUser: {ident}"
+            new_text = f"❌ REJECTED — request #{rid}\nUser: {ident}\n\nUser was told the OTP was incorrect."
+
         conn.commit(); conn.close()
-        try:
-            bot.edit_message_text(new_text, call.message.chat.id, call.message.message_id)
-        except Exception as e:
-            print(f"[edit approve err] {e}")
+
+        # Try to edit; if it fails, send a fresh message
+        ok = safe_edit(chat_id, message_id, new_text)
+        if not ok:
+            # Last-resort: still notify via callback alert
+            bot.answer_callback_query(call.id, f"{'✅ Approved' if action=='confirm' else '❌ Rejected'}", show_alert=True)
+        else:
+            bot.answer_callback_query(call.id, "Done")
         return
 
     # ── Pagination ──
     if data.startswith("usrpg_"):
         page = int(data.split("_", 1)[1])
-        try:
-            send_users_page(call.message.chat.id, page, message_id=call.message.message_id)
-        except Exception as e:
-            print(f"[page err] {e}")
+        send_users_page(chat_id, page, message_id=message_id)
+        bot.answer_callback_query(call.id, f"Page {page+1}")
         return
 
     # ── View user ──
     if data.startswith("viewusr_"):
         tid = int(data.split("_", 1)[1])
-        try:
-            send_user_detail(call.message.chat.id, tid, message_id=call.message.message_id)
-        except Exception as e:
-            print(f"[viewusr err] {e}")
-            send_user_detail(call.message.chat.id, tid)
+        send_user_detail(chat_id, tid, message_id=message_id)
+        bot.answer_callback_query(call.id, "Loaded")
         return
 
     # ── Ban ──
     if data.startswith("banusr_"):
         tid = int(data.split("_", 1)[1])
         ban_user(tid, "banned via button")
-        try:
-            send_user_detail(call.message.chat.id, tid, message_id=call.message.message_id)
-        except: pass
+        send_user_detail(chat_id, tid, message_id=message_id)
+        bot.answer_callback_query(call.id, "🚫 User banned", show_alert=True)
         return
 
     # ── Unban ──
     if data.startswith("unbanusr_"):
         tid = int(data.split("_", 1)[1])
         unban_user(tid)
-        try:
-            send_user_detail(call.message.chat.id, tid, message_id=call.message.message_id)
-        except: pass
+        send_user_detail(chat_id, tid, message_id=message_id)
+        bot.answer_callback_query(call.id, "✅ User unbanned", show_alert=True)
         return
+
+    # Unknown — tell admin
+    bot.answer_callback_query(call.id, f"Unknown: {data}", show_alert=True)
 
 # ─────────────── RUN ───────────────
 def run_bot():
