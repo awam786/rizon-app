@@ -2,7 +2,7 @@ import os
 import threading
 import uuid
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, request, jsonify, render_template
 import telebot
 from telebot.types import (
@@ -71,7 +71,7 @@ def init_db():
     conn.close()
 
 def now_str():
-    return datetime.utcnow().strftime("%b %d, %H:%M")
+    return datetime.now(timezone.utc).strftime("%b %d, %H:%M")
 
 def upsert_user(user):
     if not user or not user.get("id"):
