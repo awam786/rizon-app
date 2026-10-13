@@ -19,9 +19,8 @@ bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 _lock = threading.Lock()
 
-# ─────────────── DB (LOCK-SAFE) ───────────────
+# ─────────────── DB ───────────────
 def get_db():
-    """Every connection uses WAL + long timeout so concurrent reads/writes don't deadlock."""
     conn = sqlite3.connect(DB_PATH, check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
     try:
@@ -50,7 +49,12 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT, telegram_id INTEGER,
             timestamp TEXT, action_type TEXT, details TEXT, request_id INTEGER
         );
+        CREATE TABLE IF NOT EXISTS bot_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, telegram_id INTEGER,
+            message_id INTEGER, chat_id INTEGER, sent_at TEXT
+        );
         CREATE INDEX IF NOT EXISTS idx_actions_user ON actions(telegram_id);
+        CREATE INDEX IF NOT EXISTS idx_botmsg_user  ON bot_messages(telegram_id);
     """)
     conn.commit(); conn.close()
 
@@ -119,7 +123,66 @@ def find_user(query):
     finally:
         conn.close()
 
+# ─────────────── TRACK + DELETE BOT MESSAGES ───────────────
+def track_bot_message(user_tid, message_id, chat_id):
+    """Record a bot message so it can be deleted later on ban."""
+    with _lock:
+        conn = get_db()
+        try:
+            conn.execute("""INSERT INTO bot_messages (telegram_id, message_id, chat_id, sent_at)
+                            VALUES (?, ?, ?, ?)""",
+                         (user_tid, message_id, chat_id, now_str()))
+            conn.commit()
+        except Exception as e:
+            print(f"[track_bot_message err] {e}")
+        finally:
+            conn.close()
+
+def send_to_user(chat_id, text, **kwargs):
+    """Send a message to a user and track its ID for later deletion."""
+    try:
+        msg = bot.send_message(chat_id, text, **kwargs)
+        track_bot_message(chat_id, msg.message_id, chat_id)
+        return msg
+    except Exception as e:
+        print(f"[send_to_user err] {e}")
+        return None
+
+def wipe_bot_messages(tid):
+    """Delete every tracked bot message in this user's private chat."""
+    conn = get_db()
+    try:
+        rows = conn.execute("SELECT message_id FROM bot_messages WHERE telegram_id=?", (tid,)).fetchall()
+    finally:
+        conn.close()
+
+    if not rows:
+        print(f"[wipe] no tracked messages for {tid}")
+        return 0
+
+    deleted = 0
+    for r in rows:
+        try:
+            bot.delete_message(tid, r["message_id"])
+            deleted += 1
+        except Exception as e:
+            # Often fails for messages >48h old — safe to ignore
+            pass
+
+    # Clear tracking rows
+    with _lock:
+        conn = get_db()
+        try:
+            conn.execute("DELETE FROM bot_messages WHERE telegram_id=?", (tid,))
+            conn.commit()
+        finally:
+            conn.close()
+
+    print(f"[wipe] deleted {deleted}/{len(rows)} messages for {tid}")
+    return deleted
+
 def ban_user(tid, reason=""):
+    # 1. Mark banned immediately
     with _lock:
         conn = get_db()
         try:
@@ -128,6 +191,21 @@ def ban_user(tid, reason=""):
             conn.commit()
         finally:
             conn.close()
+
+    # 2. Wipe all bot messages
+    wipe_bot_messages(tid)
+
+    # 3. Send a single final notice (not tracked — should remain visible)
+    try:
+        bot.send_message(
+            tid,
+            "🚫 You have been banned from using this bot.\n"
+            "All previous messages have been cleared."
+        )
+    except Exception as e:
+        print(f"[ban final msg err] {e}")
+
+    # 4. Log
     log_action(tid, "banned", reason or "no reason")
 
 def unban_user(tid):
@@ -153,6 +231,16 @@ def track_open():
         upsert_user(user)
         log_action(user["id"], "opened_app", "Opened Mini App")
     return jsonify({"ok": True})
+
+@app.route("/api/check-ban/<int:tid>", methods=["GET"])
+def check_ban(tid):
+    """Frontend polls this to close the app the instant a user is banned."""
+    conn = get_db()
+    try:
+        row = conn.execute("SELECT banned FROM users WHERE telegram_id=?", (tid,)).fetchone()
+    finally:
+        conn.close()
+    return jsonify({"banned": bool(row and row["banned"])})
 
 @app.route("/api/request-otp", methods=["POST"])
 def request_otp():
@@ -298,7 +386,8 @@ def cmd_start(message):
     log_action(tid, "start", "/start (opened bot)")
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("🚀 Open ToonPay App", web_app=WebAppInfo(url=WEBAPP_URL)))
-    bot.send_message(
+    # Track this message so it can be wiped on ban
+    send_to_user(
         message.chat.id,
         "👋 Welcome to Rizon!\n\nTap the button below to open the ToonPay app and get started.",
         reply_markup=markup,
@@ -327,7 +416,7 @@ def cmd_ban(message):
         bot.send_message(message.chat.id, f"❌ User not found: {target}"); return
     ban_user(u["telegram_id"], reason)
     label = u["username"] or u["first_name"] or u["telegram_id"]
-    msg = f"🚫 Banned {label}"
+    msg = f"🚫 Banned {label} — all bot messages wiped"
     if reason: msg += f"\nReason: {reason}"
     bot.send_message(message.chat.id, msg)
 
@@ -424,7 +513,7 @@ def send_user_detail(chat_id, tid, message_id=None):
     if u["banned"]:
         markup.add(InlineKeyboardButton("✅ Unban User", callback_data=f"unbanusr_{tid}"))
     else:
-        markup.add(InlineKeyboardButton("🚫 Ban User",   callback_data=f"banusr_{tid}"))
+        markup.add(InlineKeyboardButton("🚫 Ban User & Wipe Chat", callback_data=f"banusr_{tid}"))
     markup.add(
         InlineKeyboardButton("🔄 Refresh",     callback_data=f"viewusr_{tid}"),
         InlineKeyboardButton("◀ Back to list", callback_data="usrpg_0"),
@@ -458,9 +547,7 @@ def handle_admin_otp_reply(message):
     log_action(tid, "admin_assigned_otp", f"{admin_otp} for request #{rid}", rid)
     bot.reply_to(message, f"✅ OTP {admin_otp} assigned for request #{rid}.\nWaiting for the user to enter it…")
 
-# ═══════════════════════════════════════════════════════════
-#  CALLBACK ROUTER (LOCK-SAFE)
-# ═══════════════════════════════════════════════════════════
+# ─────────────── CALLBACK ROUTER ───────────────
 @bot.callback_query_handler(func=lambda call: True)
 def on_callback(call):
     print(f"[CB] data={call.data!r} from={call.from_user.id} admin={ADMIN_ID}")
@@ -471,7 +558,6 @@ def on_callback(call):
         return
 
     data = call.data or ""
-
     try:
         _process_callback(call, data)
     except Exception as e:
@@ -484,18 +570,16 @@ def _process_callback(call, data):
     chat_id    = call.message.chat.id
     message_id = call.message.message_id
 
-    # ── Confirm / Reject ──
+    # ── Confirm / Reject OTP ──
     if data.startswith("confirm_") or data.startswith("reject_"):
         action, rid_s = data.split("_", 1)
         rid = int(rid_s)
         print(f"[CB] OTP action={action} rid={rid}")
 
-        # STEP 1: update DB — commit and CLOSE before log_action
         conn = get_db()
         try:
             row = conn.execute("SELECT * FROM requests WHERE id=?", (rid,)).fetchone()
             if not row:
-                print(f"[CB] request #{rid} not found")
                 bot.answer_callback_query(call.id, "Request not found", show_alert=True)
                 return
             tid = row["telegram_id"]; ident = row["identifier"]
@@ -508,7 +592,6 @@ def _process_callback(call, data):
         finally:
             conn.close()
 
-        # STEP 2: log (new connection — safe now, previous one released)
         if action == "confirm":
             log_action(tid, "approved", f"(LOGIN) — request #{rid}", rid)
             new_text = f"✅ APPROVED — request #{rid}\nUser: {ident}\n\nUser has been granted login access."
@@ -516,11 +599,9 @@ def _process_callback(call, data):
             log_action(tid, "rejected", f"— request #{rid}", rid)
             new_text = f"❌ REJECTED — request #{rid}\nUser: {ident}\n\nUser was told the OTP was incorrect."
 
-        # STEP 3: edit admin message
         ok = safe_edit(chat_id, message_id, new_text)
         label = "✅ Approved" if action == "confirm" else "❌ Rejected"
-        try:
-            bot.answer_callback_query(call.id, label, show_alert=not ok)
+        try: bot.answer_callback_query(call.id, label, show_alert=not ok)
         except: pass
         return
 
@@ -538,12 +619,12 @@ def _process_callback(call, data):
         bot.answer_callback_query(call.id, "Loaded")
         return
 
-    # ── Ban ──
+    # ── Ban (now wipes messages) ──
     if data.startswith("banusr_"):
         tid = int(data.split("_", 1)[1])
+        bot.answer_callback_query(call.id, "🚫 Banning + wiping chat…", show_alert=True)
         ban_user(tid, "banned via button")
         send_user_detail(chat_id, tid, message_id=message_id)
-        bot.answer_callback_query(call.id, "🚫 User banned", show_alert=True)
         return
 
     # ── Unban ──
