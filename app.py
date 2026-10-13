@@ -169,6 +169,7 @@ def request_otp():
     identifier = (data.get("identifier") or "").strip()
     user = data.get("telegram_user") or {}
     tid = user.get("id")
+    print(f"[REQ-OTP] identifier={identifier!r} user={user!r} tid={tid!r}")
 
     if not identifier:
         return jsonify({"error": "Email or phone required"}), 400
