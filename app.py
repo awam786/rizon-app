@@ -385,11 +385,11 @@ def cmd_start(message):
         return
     log_action(tid, "start", "/start (opened bot)")
     markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("🚀 Open ToonPay App", web_app=WebAppInfo(url=WEBAPP_URL)))
+    markup.add(InlineKeyboardButton("🚀 Open Rizon App", web_app=WebAppInfo(url=WEBAPP_URL)))
     # Track this message so it can be wiped on ban
     send_to_user(
         message.chat.id,
-        "👋 Welcome to Rizon!\n\nTap the button below to open the ToonPay app and get started.",
+        "👋 Welcome to Rizon!\n\nTap the button below to open the Rizon app and get started.",
         reply_markup=markup,
     )
 
