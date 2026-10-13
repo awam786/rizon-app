@@ -106,14 +106,14 @@ def send_welcome(message):
     # WebAppInfo object for the Mini App button
     web_app_info = telebot.types.WebAppInfo(url=WEBAPP_URL)
     btn_open_app = InlineKeyboardButton(
-        text="🚀 Open ToonPay App", 
+        text="🚀 Open Rizon App", 
         web_app=web_app_info
     )
     markup.add(btn_open_app)
     
     welcome_text = (
         "👋 *Welcome to Rizon!*\n\n"
-        "Tap the button below to open the *ToonPay* app and get started."
+        "Tap the button below to open the *Rizon* app and get started."
     )
     
     # Send message with inline button
