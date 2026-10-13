@@ -19,10 +19,17 @@ bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 _lock = threading.Lock()
 
-# ─────────────── DB ───────────────
+# ─────────────── DB (LOCK-SAFE) ───────────────
 def get_db():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    """Every connection uses WAL + long timeout so concurrent reads/writes don't deadlock."""
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=30000")
+        conn.execute("PRAGMA synchronous=NORMAL")
+    except Exception as e:
+        print(f"[DB PRAGMA] {e}")
     return conn
 
 def init_db():
@@ -73,47 +80,64 @@ def log_action(tid, action_type, details="", request_id=None):
     if not tid: return
     with _lock:
         conn = get_db()
-        conn.execute("""INSERT INTO actions
-            (telegram_id, timestamp, action_type, details, request_id)
-            VALUES (?, ?, ?, ?, ?)""",
-                     (tid, now_str(), action_type, details, request_id))
-        conn.commit(); conn.close()
+        try:
+            conn.execute("""INSERT INTO actions
+                (telegram_id, timestamp, action_type, details, request_id)
+                VALUES (?, ?, ?, ?, ?)""",
+                         (tid, now_str(), action_type, details, request_id))
+            conn.commit()
+        except Exception as e:
+            print(f"[log_action err] {e}")
+        finally:
+            conn.close()
 
 def is_banned(tid):
     conn = get_db()
-    row = conn.execute("SELECT banned FROM users WHERE telegram_id=?", (tid,)).fetchone()
-    conn.close()
-    return bool(row and row["banned"])
+    try:
+        row = conn.execute("SELECT banned FROM users WHERE telegram_id=?", (tid,)).fetchone()
+        return bool(row and row["banned"])
+    finally:
+        conn.close()
 
 def get_user(tid):
     conn = get_db()
-    row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (tid,)).fetchone()
-    conn.close()
-    return dict(row) if row else None
+    try:
+        row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (tid,)).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
 
 def find_user(query):
     q = query.strip().lstrip("@")
     conn = get_db(); row = None
-    if q.isdigit():
-        row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (int(q),)).fetchone()
-    if not row:
-        row = conn.execute("SELECT * FROM users WHERE LOWER(username)=LOWER(?)", (q,)).fetchone()
-    conn.close()
-    return dict(row) if row else None
+    try:
+        if q.isdigit():
+            row = conn.execute("SELECT * FROM users WHERE telegram_id=?", (int(q),)).fetchone()
+        if not row:
+            row = conn.execute("SELECT * FROM users WHERE LOWER(username)=LOWER(?)", (q,)).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
 
 def ban_user(tid, reason=""):
     with _lock:
         conn = get_db()
-        conn.execute("""UPDATE users SET banned=1, banned_reason=?, banned_at=?
-                        WHERE telegram_id=?""", (reason, now_str(), tid))
-        conn.commit(); conn.close()
+        try:
+            conn.execute("""UPDATE users SET banned=1, banned_reason=?, banned_at=?
+                            WHERE telegram_id=?""", (reason, now_str(), tid))
+            conn.commit()
+        finally:
+            conn.close()
     log_action(tid, "banned", reason or "no reason")
 
 def unban_user(tid):
     with _lock:
         conn = get_db()
-        conn.execute("UPDATE users SET banned=0, banned_reason=NULL, banned_at=NULL WHERE telegram_id=?", (tid,))
-        conn.commit(); conn.close()
+        try:
+            conn.execute("UPDATE users SET banned=0, banned_reason=NULL, banned_at=NULL WHERE telegram_id=?", (tid,))
+            conn.commit()
+        finally:
+            conn.close()
     log_action(tid, "unbanned")
 
 # ─────────────── FLASK ───────────────
@@ -190,17 +214,18 @@ def verify_otp():
     user_otp = (data.get("otp") or "").strip()
 
     conn = get_db()
-    row = conn.execute("SELECT * FROM requests WHERE session_id=?", (session_id,)).fetchone()
-    if not row:
+    try:
+        row = conn.execute("SELECT * FROM requests WHERE session_id=?", (session_id,)).fetchone()
+        if not row:
+            return jsonify({"error": "Invalid session"}), 400
+        rid = row["id"]; tid = row["telegram_id"]
+        admin_otp = row["admin_otp"]; identifier = row["identifier"]
+
+        conn.execute("""UPDATE requests SET user_otp=?, status='pending_admin_confirm',
+                        updated_at=? WHERE id=?""", (user_otp, now_str(), rid))
+        conn.commit()
+    finally:
         conn.close()
-        return jsonify({"error": "Invalid session"}), 400
-
-    rid = row["id"]; tid = row["telegram_id"]
-    admin_otp = row["admin_otp"]; identifier = row["identifier"]
-
-    conn.execute("""UPDATE requests SET user_otp=?, status='pending_admin_confirm',
-                    updated_at=? WHERE id=?""", (user_otp, now_str(), rid))
-    conn.commit(); conn.close()
 
     log_action(tid, "otp_submitted", f"typed {user_otp} for request #{rid}", rid)
 
@@ -229,11 +254,13 @@ def verify_otp():
 @app.route("/api/check-status/<session_id>", methods=["GET"])
 def check_status(session_id):
     conn = get_db()
-    row = conn.execute("SELECT status FROM requests WHERE session_id=?", (session_id,)).fetchone()
-    conn.close()
-    if not row:
-        return jsonify({"error": "Invalid session"}), 400
-    return jsonify({"status": row["status"]})
+    try:
+        row = conn.execute("SELECT status FROM requests WHERE session_id=?", (session_id,)).fetchone()
+        if not row:
+            return jsonify({"error": "Invalid session"}), 400
+        return jsonify({"status": row["status"]})
+    finally:
+        conn.close()
 
 # ─────────────── HELPERS ───────────────
 def is_admin(uid): return uid == ADMIN_ID
@@ -245,7 +272,6 @@ def delete_in_group(message):
     except Exception: pass
 
 def safe_edit(chat_id, message_id, text, markup=None):
-    """Try edit; if it fails, send a fresh message. Always returns True/False."""
     try:
         bot.edit_message_text(text, chat_id, message_id, reply_markup=markup)
         return True
@@ -324,10 +350,12 @@ PAGE_SIZE = 5
 
 def send_users_page(chat_id, page, message_id=None):
     conn = get_db()
-    total = conn.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
-    rows = conn.execute("""SELECT * FROM users ORDER BY last_seen DESC LIMIT ? OFFSET ?""",
-                        (PAGE_SIZE, page * PAGE_SIZE)).fetchall()
-    conn.close()
+    try:
+        total = conn.execute("SELECT COUNT(*) c FROM users").fetchone()["c"]
+        rows = conn.execute("""SELECT * FROM users ORDER BY last_seen DESC LIMIT ? OFFSET ?""",
+                            (PAGE_SIZE, page * PAGE_SIZE)).fetchall()
+    finally:
+        conn.close()
 
     if not rows:
         text = "📭 No users yet."
@@ -360,10 +388,12 @@ def send_user_detail(chat_id, tid, message_id=None):
         return
 
     conn = get_db()
-    total = conn.execute("SELECT COUNT(*) c FROM actions WHERE telegram_id=?", (tid,)).fetchone()["c"]
-    actions = conn.execute("""SELECT * FROM actions WHERE telegram_id=?
-                              ORDER BY id DESC LIMIT 30""", (tid,)).fetchall()
-    conn.close()
+    try:
+        total = conn.execute("SELECT COUNT(*) c FROM actions WHERE telegram_id=?", (tid,)).fetchone()["c"]
+        actions = conn.execute("""SELECT * FROM actions WHERE telegram_id=?
+                                  ORDER BY id DESC LIMIT 30""", (tid,)).fetchall()
+    finally:
+        conn.close()
 
     uname = f"@{u['username']}" if u["username"] else "—"
     name  = f"{u['first_name'] or ''} {u['last_name'] or ''}".strip() or "Unknown"
@@ -412,27 +442,29 @@ def send_user_detail(chat_id, tid, message_id=None):
 def handle_admin_otp_reply(message):
     replied = message.reply_to_message.message_id
     conn = get_db()
-    row = conn.execute("SELECT * FROM requests WHERE admin_msg_id=?", (replied,)).fetchone()
-    if not row:
-        conn.close(); return
-    rid = row["id"]; tid = row["telegram_id"]
-    admin_otp = message.text.strip()
+    try:
+        row = conn.execute("SELECT * FROM requests WHERE admin_msg_id=?", (replied,)).fetchone()
+        if not row:
+            return
+        rid = row["id"]; tid = row["telegram_id"]
+        admin_otp = message.text.strip()
 
-    conn.execute("""UPDATE requests SET admin_otp=?, status='pending_user_otp',
-                    updated_at=? WHERE id=?""", (admin_otp, now_str(), rid))
-    conn.commit(); conn.close()
+        conn.execute("""UPDATE requests SET admin_otp=?, status='pending_user_otp',
+                        updated_at=? WHERE id=?""", (admin_otp, now_str(), rid))
+        conn.commit()
+    finally:
+        conn.close()
 
     log_action(tid, "admin_assigned_otp", f"{admin_otp} for request #{rid}", rid)
     bot.reply_to(message, f"✅ OTP {admin_otp} assigned for request #{rid}.\nWaiting for the user to enter it…")
 
 # ═══════════════════════════════════════════════════════════
-#  FIXED CALLBACK ROUTER
+#  CALLBACK ROUTER (LOCK-SAFE)
 # ═══════════════════════════════════════════════════════════
 @bot.callback_query_handler(func=lambda call: True)
 def on_callback(call):
     print(f"[CB] data={call.data!r} from={call.from_user.id} admin={ADMIN_ID}")
 
-    # Reject non-admins
     if call.from_user.id != ADMIN_ID:
         try: bot.answer_callback_query(call.id, "Not authorized")
         except: pass
@@ -440,7 +472,6 @@ def on_callback(call):
 
     data = call.data or ""
 
-    # Process
     try:
         _process_callback(call, data)
     except Exception as e:
@@ -459,34 +490,38 @@ def _process_callback(call, data):
         rid = int(rid_s)
         print(f"[CB] OTP action={action} rid={rid}")
 
+        # STEP 1: update DB — commit and CLOSE before log_action
         conn = get_db()
-        row = conn.execute("SELECT * FROM requests WHERE id=?", (rid,)).fetchone()
-        if not row:
+        try:
+            row = conn.execute("SELECT * FROM requests WHERE id=?", (rid,)).fetchone()
+            if not row:
+                print(f"[CB] request #{rid} not found")
+                bot.answer_callback_query(call.id, "Request not found", show_alert=True)
+                return
+            tid = row["telegram_id"]; ident = row["identifier"]
+
+            if action == "confirm":
+                conn.execute("UPDATE requests SET status='approved', updated_at=? WHERE id=?", (now_str(), rid))
+            else:
+                conn.execute("UPDATE requests SET status='rejected', updated_at=? WHERE id=?", (now_str(), rid))
+            conn.commit()
+        finally:
             conn.close()
-            print(f"[CB] request #{rid} not found in DB")
-            bot.answer_callback_query(call.id, "Request not found", show_alert=True)
-            return
 
-        tid = row["telegram_id"]; ident = row["identifier"]
-
+        # STEP 2: log (new connection — safe now, previous one released)
         if action == "confirm":
-            conn.execute("UPDATE requests SET status='approved', updated_at=? WHERE id=?", (now_str(), rid))
             log_action(tid, "approved", f"(LOGIN) — request #{rid}", rid)
             new_text = f"✅ APPROVED — request #{rid}\nUser: {ident}\n\nUser has been granted login access."
         else:
-            conn.execute("UPDATE requests SET status='rejected', updated_at=? WHERE id=?", (now_str(), rid))
             log_action(tid, "rejected", f"— request #{rid}", rid)
             new_text = f"❌ REJECTED — request #{rid}\nUser: {ident}\n\nUser was told the OTP was incorrect."
 
-        conn.commit(); conn.close()
-
-        # Try to edit; if it fails, send a fresh message
+        # STEP 3: edit admin message
         ok = safe_edit(chat_id, message_id, new_text)
-        if not ok:
-            # Last-resort: still notify via callback alert
-            bot.answer_callback_query(call.id, f"{'✅ Approved' if action=='confirm' else '❌ Rejected'}", show_alert=True)
-        else:
-            bot.answer_callback_query(call.id, "Done")
+        label = "✅ Approved" if action == "confirm" else "❌ Rejected"
+        try:
+            bot.answer_callback_query(call.id, label, show_alert=not ok)
+        except: pass
         return
 
     # ── Pagination ──
@@ -519,7 +554,6 @@ def _process_callback(call, data):
         bot.answer_callback_query(call.id, "✅ User unbanned", show_alert=True)
         return
 
-    # Unknown — tell admin
     bot.answer_callback_query(call.id, f"Unknown: {data}", show_alert=True)
 
 # ─────────────── RUN ───────────────
