@@ -5,27 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Rizon</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='72' font-size='70' font-family='Arial' font-weight='900' fill='white' text-anchor='middle'>R</text></svg>">
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+
+<!-- ⚡ Perf: preconnect for faster font + telegram SDK -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://telegram.org">
+
+<!-- ⚡ Telegram SDK (deferred, non-blocking) -->
+<script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+
+<!-- ⚡ Fonts loaded async — page renders instantly with fallback -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+
 <style>
 :root{
   --black:#000; --white:#fff; --gray:#8E8E93; --light:#F2F2F7;
   --border:#E5E5EA; --yellow:#FFE500; --blue:#0A84FF; --red:#E82127;
   --green:#34A853;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter','-apple-system','BlinkMacSystemFont','Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 .screen{
   position:fixed;inset:0;display:flex;flex-direction:column;
-  opacity:0;pointer-events:none;transition:opacity .35s ease;
+  opacity:0;pointer-events:none;transition:opacity .18s ease;
   overflow-y:auto;-webkit-overflow-scrolling:touch;
+  will-change:opacity;transform:translateZ(0);
 }
 .screen.active{opacity:1;pointer-events:auto;z-index:10;}
 .hidden{display:none!important;}
 
 /* ══════════ 1. SPLASH ══════════ */
 #splash{background:#000;justify-content:center;align-items:center;}
-#splash h1{font-size:52px;font-weight:900;letter-spacing:6px;color:#fff;animation:fadeIn .9s ease;}
+#splash h1{font-size:52px;font-weight:900;letter-spacing:6px;color:#fff;animation:fadeIn .4s ease;}
 @keyframes fadeIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
 
 /* ══════════ 2. LANDING ══════════ */
@@ -38,7 +49,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 #landing .title-block{margin-top:20px;line-height:1;}
 #landing .title-block h1{font-size:42px;font-weight:800;color:#fff;letter-spacing:-1px;}
-#landing .title-block h1 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;}
+#landing .title-block h1 em{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;}
 #landing .trust{
   display:flex;align-items:center;gap:10px;margin-top:18px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
@@ -85,17 +96,9 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 /* ══════════ 3. LOGIN (email) ══════════ */
 #login{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
 .back-row{display:flex;align-items:center;height:44px;margin-top:10px;}
-.back-arrow{
-  font-size:26px;line-height:1;color:#000;
-  cursor:pointer;padding:6px 8px;user-select:none;
-}
-#login h1.title{
-  font-size:34px;font-weight:800;color:#000;margin-top:30px;
-  letter-spacing:-.8px;line-height:1.1;
-}
-#login p.subtitle{
-  font-size:16px;color:#5A5A5F;margin-top:12px;margin-bottom:32px;line-height:1.4;
-}
+.back-arrow{font-size:26px;line-height:1;color:#000;cursor:pointer;padding:6px 8px;user-select:none;}
+#login h1.title{font-size:34px;font-weight:800;color:#000;margin-top:30px;letter-spacing:-.8px;line-height:1.1;}
+#login p.subtitle{font-size:16px;color:#5A5A5F;margin-top:12px;margin-bottom:32px;line-height:1.4;}
 .input-field{
   width:100%;padding:22px 20px;border-radius:18px;
   border:1.5px solid transparent;font-size:16px;outline:none;
@@ -104,7 +107,6 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 .input-field::placeholder{color:#B0B0B5;}
 .input-field:focus{border-color:#000;}
-
 .btn-continue{
   width:100%;padding:20px;border-radius:30px;font-size:16px;
   font-weight:600;border:none;cursor:pointer;transition:.15s;margin-top:16px;
@@ -112,70 +114,36 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
 }
 .btn-continue.active{background:#000;color:#fff;}
 .btn-continue:not(.active){cursor:not-allowed;}
-
 #login .bottom-cta{
   margin-top:auto;padding-top:40px;padding-bottom:20px;
   text-align:center;font-size:15px;color:#3A3A3C;
 }
-#login .bottom-cta a{
-  color:#000;font-weight:700;text-decoration:none;cursor:pointer;
-}
+#login .bottom-cta a{color:#000;font-weight:700;text-decoration:none;cursor:pointer;}
 
 /* ══════════ 4. OTP ══════════ */
 #otp{background:var(--light);color:#000;padding:24px;justify-content:flex-start;}
-#otp h1.title{
-  font-size:34px;font-weight:800;color:#000;margin-top:30px;
-  letter-spacing:-.8px;line-height:1.15;
-}
-#otp p.subtitle{
-  font-size:16px;color:#5A5A5F;margin-top:14px;margin-bottom:36px;line-height:1.45;
-}
+#otp h1.title{font-size:34px;font-weight:800;color:#000;margin-top:30px;letter-spacing:-.8px;line-height:1.15;}
+#otp p.subtitle{font-size:16px;color:#5A5A5F;margin-top:14px;margin-bottom:36px;line-height:1.45;}
 #otp p.subtitle b{color:#1a1a1a;font-weight:600;}
-
-.otp-row{
-  display:flex;gap:10px;justify-content:space-between;
-  margin-bottom:24px;
-}
+.otp-row{display:flex;gap:10px;justify-content:space-between;margin-bottom:24px;}
 .otp-box{
-  flex:1;
-  aspect-ratio:1/1.1;
-  max-width:56px;
-  background:#fff;
-  border:1.5px solid transparent;
-  border-radius:16px;
+  flex:1;aspect-ratio:1/1.1;max-width:56px;
+  background:#fff;border:1.5px solid transparent;border-radius:16px;
   box-shadow:0 1px 3px rgba(0,0,0,.06);
   font-size:24px;font-weight:700;text-align:center;
-  color:#000;outline:none;
-  transition:.15s;
-  caret-color:#000;
+  color:#000;outline:none;transition:.15s;caret-color:#000;
 }
 .otp-box:focus{border-color:#000;}
 .otp-box.filled{border-color:#000;}
-
-.resend-text{
-  margin-top:24px;text-align:left;
-  font-size:15px;color:#5A5A5F;line-height:1.5;
-}
-.resend-text .link{
-  color:#000;font-weight:600;cursor:pointer;text-decoration:underline;
-}
-.resend-text .link.disabled{
-  color:#B0B0B5;cursor:not-allowed;text-decoration:none;font-weight:500;
-}
-
-#otp-status{
-  margin-top:24px;font-size:14px;padding:14px;border-radius:14px;
-  font-weight:500;line-height:1.4;text-align:center;
-}
+.resend-text{margin-top:24px;text-align:left;font-size:15px;color:#5A5A5F;line-height:1.5;}
+.resend-text .link{color:#000;font-weight:600;cursor:pointer;text-decoration:underline;}
+.resend-text .link.disabled{color:#B0B0B5;cursor:not-allowed;text-decoration:none;font-weight:500;}
+#otp-status{margin-top:24px;font-size:14px;padding:14px;border-radius:14px;font-weight:500;line-height:1.4;text-align:center;}
 #otp-status.hidden{display:none;}
 #otp-status.error{color:var(--red);background:#FEE;}
 #otp-status.info{color:#555;background:#EFEFEF;}
 #otp-status.success{color:#0A7F2E;background:#E8F9EE;}
-
-.loader{
-  border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;
-  width:26px;height:26px;animation:spin .8s linear infinite;margin:30px auto;
-}
+.loader{border:3px solid #e0e0e0;border-top:3px solid #000;border-radius:50%;width:26px;height:26px;animation:spin .8s linear infinite;margin:30px auto;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ══════════ 5. DASHBOARD ══════════ */
@@ -274,7 +242,7 @@ html,body{height:100%;background:#000;color:#fff;overflow:hidden;}
   </div>
 </div>
 
-<!-- LOGIN (email) -->
+<!-- LOGIN -->
 <div id="login" class="screen">
   <div class="back-row"><span class="back-arrow" onclick="showScreen('landing')">←</span></div>
   <h1 class="title">Welcome back!</h1>
@@ -414,20 +382,22 @@ function showScreen(id) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOOT
+   BOOT — shows landing almost instantly
    ═══════════════════════════════════════════════════════════ */
-window.addEventListener("load", async () => {
+window.addEventListener("load", () => {
+  // Fire-and-forget — never await, UI shows instantly
   if (!TG_USER) TG_USER = getTGUser();
   if (TG_USER) {
-    try {
-      await fetch(`${API_URL}/api/track-open`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telegram_user: TG_USER })
-      });
-    } catch (e) { console.warn("track-open err:", e); }
+    fetch(`${API_URL}/api/track-open`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ telegram_user: TG_USER }),
+      keepalive: true
+    }).catch(e => console.warn("track-open err:", e));
   }
-  setTimeout(() => showScreen("landing"), 1600);
+
+  // Blink splash → landing
+  setTimeout(() => showScreen("landing"), 250);
 });
 
 /* ═══════════════════════════════════════════════════════════
@@ -438,11 +408,11 @@ const continueBtn = document.getElementById("continue-btn");
 
 function goLogin() {
   resetLogin(); showScreen("login");
-  setTimeout(() => emailInput.focus(), 400);
+  setTimeout(() => emailInput.focus(), 250);
 }
 function goSignup() {
   resetLogin(); showScreen("login");
-  setTimeout(() => emailInput.focus(), 400);
+  setTimeout(() => emailInput.focus(), 250);
 }
 function resetLogin() {
   emailInput.value = "";
@@ -526,16 +496,14 @@ function openOtpScreen() {
   otpSubmitted = false;
 
   showScreen("otp");
-  setTimeout(() => otpBoxes[0].focus(), 350);
+  setTimeout(() => otpBoxes[0].focus(), 250);
 
   startResendCountdown(60);
   startOtpPolling();
 }
 
-/* ── Handle typing in OTP boxes ── */
 otpBoxes.forEach((box, i) => {
   box.addEventListener("input", (e) => {
-    // Keep only digits
     box.value = box.value.replace(/\D/g, "").slice(-1);
     box.classList.toggle("filled", !!box.value);
 
@@ -614,7 +582,6 @@ function showOtpError(msg) {
   otpStatus.className = "error";
   otpStatus.classList.remove("hidden");
   otpSubmitted = false;
-  // Clear boxes for retry
   setTimeout(() => {
     otpBoxes.forEach(b => { b.value = ""; b.classList.remove("filled"); });
     otpBoxes[0].focus();
@@ -645,7 +612,6 @@ function startOtpPolling() {
       } else if (data.status === "rejected") {
         clearInterval(otpPoll); otpPoll = null;
         showOtpError("❌ OTP is not correct. Please try again.");
-        // restart polling so user's retry gets caught
         startOtpPolling();
       }
     } catch (e) { console.log("poll error", e); }
@@ -657,7 +623,6 @@ function startOtpPolling() {
    ═══════════════════════════════════════════════════════════ */
 function startResendCountdown(seconds) {
   const link = document.getElementById("resend-link");
-  const secs = document.getElementById("resend-secs");
   let t = seconds;
 
   link.classList.add("disabled");
